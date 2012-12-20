@@ -16,11 +16,11 @@
 (defn max-value [arms]
   (apply max-key arm-value arms))
 
-(defn find-max-value-arm [arms]
+(defn max-value-arm-idx [arms]
   (let [m (max-value arms)]
     (arm-position arms m)))
 
 (defn select-arm [arms epsilon]
   (if (> (rand 1) epsilon)
-    (find-max-value-arm arms)
+    (nth arms (max-value-arm-idx arms))
     (nth arms (rand-int (count arms)))))
