@@ -9,7 +9,7 @@
                                             (fn [n] (format "name %d" n))))
 
 ; repeatedly simulate the given bandit 100 times across 250 pulls
-(def s (repeatedly-simulate bandit 
+(def s (repeatedly-simulate-seq bandit 
                      (partial eg/select-arm 0.1) 
                      eg/update-arm 
                      arms

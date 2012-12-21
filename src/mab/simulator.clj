@@ -144,8 +144,8 @@
   "Compute the average reward at time t."
   [r]
    (float 
-     (/ (cumulative-reward (simulation-map-result r))
-        (t (simulation-map-result r)))))
+     (/ (cumulative-reward (simulation-result r))
+        (t (simulation-result r)))))
 
 (defn datapoint-at-t-seq
   "Calculate a given data point at time. For example:
