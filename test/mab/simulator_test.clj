@@ -34,6 +34,14 @@
   (fact
     (reduce + 0 (map #(:count %) (:arms sim))) => 1000)
 
-  (fact
-    (> (float (/ (cumulative-reward (:results sim))
-              (t (:results sim)))) 0.8) => truthy))
+  (let [avg-rwd (float (/ (cumulative-reward (:results sim))
+                          (t (:results sim))))]
+    (fact
+      (> avg-rwd 0.75) => truthy)))
+
+
+(let [table (tabulate-simulation-results identity [4 5 6] [7 8 9])]
+  (fact (first (first table)) => 1)
+  (fact (second (first table)) => 4)
+  (fact (first (second table)) => 2)
+  (fact (second (second table)) => 5))
