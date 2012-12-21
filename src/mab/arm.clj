@@ -10,7 +10,6 @@
   ([]                 (create-arm 0 0 {})))
 
 
-
 (defn arm-count [arm]
   (get arm :count 0))
 

@@ -20,7 +20,7 @@
   (let [m (max-value arms)]
     (arm-position arms m)))
 
-(defn select-arm [arms epsilon]
+(defn select-arm [epsilon arms]
   (if (> (rand 1) epsilon)
     (nth arms (max-value-arm-idx arms))
     (nth arms (rand-int (count arms)))))

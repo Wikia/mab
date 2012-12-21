@@ -20,6 +20,6 @@
 (fact
   (get 
     (arm-meta 
-      (mab-eg/select-arm arms 0))
+      (mab-eg/select-arm 0 arms))
     :name) => "test3") 
       
