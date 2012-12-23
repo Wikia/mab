@@ -12,13 +12,14 @@
               (io/writer file)] 
     (csv/write-csv out-file data)))
 
+; TODO make sims and iterations params
 (defn test-epsilons
-  [epsilons]
+  [bandit arms sims iterations epsilons]
   (map #(repeatedly-simulate-seq bandit 
                      (partial eg/select-arm %) 
                      eg/update-arm 
                      arms
-                     250 100) epsilons))
+                     sims iterations) epsilons))
 
 (defn average-reward->csv
   [sims]
@@ -48,6 +49,6 @@
 ;            #(map (fn [s] (.toString s)) %) 
 ;            (tabulate-simulation-results identity a)))
 
-(def etest (test-epsilons [0.1 0.2 0.3 0.4 0.5]))
+(def etest (test-epsilons bandit arms 250 1000 [0.1 0.2 0.3 0.4 0.5]))
 (def data (average-reward->csv etest))
 ;(write-to-csv "plots/epsilon-greedy.csv" data)
