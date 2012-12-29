@@ -4,10 +4,11 @@
 (defn create-bernoulli-arm 
   "Creates a Bernoulli arm that will reward 1 with probability p."
   [p]
-  (fn [] 
-    (if (> (rand 1) p)
-      0
-      1)))
+  (with-meta 
+    (fn [] 
+      (if (> (rand 1) p)
+        0
+        1)) {:probability p}))
 
 (defn create-bandit 
   "Given a seq of reward probabilities, create a Bernoulli arm for each."
@@ -16,9 +17,14 @@
 
 
 (defn best-arm-index 
-  "Find the \"best\" arm or the arm with the highest p."
+  "Find the \"best\" arm or the arm with the highest p. For use with seq of means."
   [means]
   (.indexOf means (apply max-key max means)))
+
+(defn best-bandit-index
+  "Find the \"best\" Bernoulli arm of the bandit."
+  [bandit]
+  (.indexOf bandit (apply max-key #(get (meta %) :probability) bandit)))
 
 
 (defn draw-bernoulli-arm 
@@ -146,6 +152,12 @@
    (float 
      (/ (cumulative-reward (simulation-result r))
         (t (simulation-result r)))))
+
+(defn probability-chose-best-arm
+  [best-index r]
+  (float 
+    (/ (get (nth (simulation-arms r) best-index) :count)
+       (t (simulation-result r)))))
 
 (defn datapoint-at-t-seq
   "Calculate a given data point at time. For example:

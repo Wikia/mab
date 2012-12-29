@@ -3,6 +3,7 @@
   :url "http://www.huddler.com"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :jvm-opts ["-Xmx1g" "-server"] 
   :repl-options { :init-ns mab.repl-helper }
   :profiles {:dev {:plugins [[lein-midje "2.0.3"]]}}
   :dependencies [[org.clojure/clojure "1.4.0"]
