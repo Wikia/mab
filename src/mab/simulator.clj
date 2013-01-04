@@ -8,7 +8,8 @@
     (fn [] 
       (if (> (rand 1) p)
         0
-        1)) {:probability p}))
+        1)) 
+    {:probability p}))
 
 (defn create-bandit 
   "Given a seq of reward probabilities, create a Bernoulli arm for each."
@@ -45,7 +46,8 @@
 (defn create-result 
   "Create a result. :t and :cumulative-reward are initialzed to 0."
   []
-  {:t 0 :cumulative-reward 0})
+  {:t 0 
+   :cumulative-reward 0})
 
 (defn create-simulation-map 
   [arms]
@@ -154,10 +156,12 @@
         (t (simulation-result r)))))
 
 (defn probability-chose-best-arm
+  "Percentage of times the best arm was chosen at time t."
   [best-index r]
   (float 
-    (/ (get (nth (simulation-arms r) best-index) :count)
+    (/ (arm-count (nth (simulation-arms r) best-index))
        (t (simulation-result r)))))
+
 
 (defn datapoint-at-t-seq
   "Calculate a given data point at time. For example:
@@ -187,6 +191,7 @@
 
 
 (defn average-simulation-results
+  "Average result-f over the values in results. Convenience method for averaging a datapoint at time t over N simulations."
   [result-f results]
   (let [cnt (count results)]
     (map #(/ % cnt)

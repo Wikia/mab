@@ -45,3 +45,8 @@
   (fact (second (first table)) => 4)
   (fact (first (second table)) => 2)
   (fact (second (second table)) => 5))
+
+(let [v (average-simulation-results identity [(range 10) (map inc (range 10)) (map inc (range 10))])]
+  (fact (first v) => 2/3)
+  (fact (second v) => 5/3))
+
