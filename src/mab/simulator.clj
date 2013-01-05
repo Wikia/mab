@@ -33,15 +33,6 @@
   [a]
   (a))
 
-(defn initialize-arm-vector 
-  "Create a vector af initialized arms. The distinguishing factor is 
-  the :name key in the meta attribute."
-  [n name-fn]
-  (vec
-    (map 
-      #(create-arm 0 0 {:name (name-fn %)})
-      (range n))))
-
 
 (defn create-result 
   "Create a result. :t and :cumulative-reward are initialzed to 0."
@@ -115,8 +106,7 @@
           (simulation-seq bandit 
                           (partial eg/select-arm 0.1) 
                           eg/update-arm 
-                          (initialize-arm-vector (count mean-sample-space) 
-                                                 (fn [n] (format \"name %d\" n)))))
+                          (initialize-arm-vector (count mean-sample-space)))))
   
   "
   [bandit select update arms]
@@ -132,8 +122,7 @@
   (repeatedly-simulate-seq bandit 
                   (partial eg/select-arm 0.1) 
                   eg/update-arm 
-                  (initialize-arm-vector (count mean-sample-space) 
-                                         (fn [n] (format \"name %d\" n)))
+                  (initialize-arm-vector (count mean-sample-space))
                   250 1000)
 
   [...250]
@@ -184,10 +173,10 @@
   "
   [result-f & cols]
   (let [trials (vec (map inc (range (count (first cols)))))]
-    (partition (inc (count cols))
-               (apply interleave 
-                      (concat [trials]
-                              (map #(map result-f %) cols))))))
+    (apply 
+      map vector 
+      (concat [trials]
+              (map #(map result-f %) cols)))))
 
 
 (defn average-simulation-results

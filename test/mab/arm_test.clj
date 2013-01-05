@@ -4,11 +4,13 @@
 
 (def test-arm (create-arm 1 2 {}))
 
-(def test1 (create-arm 0 0 {:name "test1"}))
-(def test2 (create-arm 0 0 {:name "test2"}))
-(def test3 (create-arm 0 0 {:name "test3"}))
+(def test1 (create-arm 0 0))
+(def test2 (create-arm 0 0))
+(def test3 (create-arm 0 0))
 
 (def arms [test1 test2 test3])
+
+
 
 (fact 
   (arm-count test-arm) => 1)
@@ -33,4 +35,15 @@
 (fact
   (arm-position arms test3) => 2)
 
+
+(def init-counts (take (count mean-sample-space) (cycle [0])))
+(def init-values (take (count mean-sample-space) (cycle [0])))
+(def init-uuids (range (count mean-sample-space)))
+(def init-arms (initialize-arm-vector init-counts init-values init-uuids))
+
+(fact 
+  (arm-uuid (nth init-arms 3)) => 4)
+
+(fact 
+  (arm-uuid (nth init-arms 4)) => 4)
 

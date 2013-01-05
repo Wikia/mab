@@ -29,8 +29,7 @@
                    (simulation-seq bandit 
                                    (partial eg/select-arm 0.1) 
                                    eg/update-arm 
-                                   (initialize-arm-vector (count mean-sample-space) 
-                                                          (fn [n] (format "name %d" n))))))]
+                                   (initialize-arm-vector (count mean-sample-space)))))]
   (fact
     (reduce + 0 (map #(:count %) (:arms sim))) => 1000)
 

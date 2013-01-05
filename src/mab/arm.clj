@@ -1,13 +1,30 @@
 (ns mab.arm)
 
+(defn arm-uuid
+  []
+  (java.util.UUID/randomUUID))
+
 
 (defn create-arm 
   "Create a bandit arm."
-  ([count value meta] {:count count
+  ([count value uuid meta] {:count count
                        :value value
+                       :uuid uuid
                        :meta meta})
-  ([count value]      (create-arm count value {}))
-  ([]                 (create-arm 0 0 {})))
+  ([count value]      (create-arm count value (arm-uuid) nil))
+  ([count value uuid] (create-arm count value uuid nil))
+  ([]                 (create-arm 0 0 (arm-uuid) nil)))
+
+
+(defn initialize-arm-vector 
+  "Create a vector af initialized arms."
+  ([n] (vec (repeatedly n  #(create-arm 0 0))))
+  ([counts values] (vec 
+                       (map #(apply create-arm %)
+                            (partition 2 (interleave counts values)))))
+  ([counts values uuids] (vec 
+                       (map #(apply create-arm %)
+                            (partition 3 (interleave counts values uuids))))))
 
 
 (defn arm-count [arm]
@@ -28,7 +45,12 @@
 (defn arm-meta [arm]
   (get arm :meta {}))
 
+(defn arm-uuid [arm]
+  (get arm :uuid))
+
 (defn arm-position [arms arm]
   (.indexOf arms arm))
+
+
 
 

@@ -33,8 +33,11 @@
 (def mean-sample-space (shuffle [0.1 0.1 0.1 0.1 0.9])) 
 (def best-arm (best-arm-index mean-sample-space))
 (def bandit (create-bandit mean-sample-space)) 
-(def arms (initialize-arm-vector (count mean-sample-space) 
-                                            (fn [n] (format "name %d" n))))
+
+(def init-counts (take (count mean-sample-space) (cycle [0])))
+(def init-values (take (count mean-sample-space) (cycle [0])))
+(def init-uuids (range (count mean-sample-space)))
+(def arms (initialize-arm-vector init-counts init-values init-uuids))
 
 ; repeatedly simulate the given bandit 100 times across 250 pulls
 (def s (repeatedly-simulate-seq bandit 
