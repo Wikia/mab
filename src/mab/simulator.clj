@@ -38,11 +38,13 @@
   "Create a result. :t and :cumulative-reward are initialzed to 0."
   []
   {:t 0 
+   :chosen nil 
    :cumulative-reward 0})
 
 (defn create-simulation-map 
   [arms]
-  {:arms arms :results (create-result)})
+  {:arms arms 
+   :results (create-result)})
 
 (defn simulation-arms 
   [m]
@@ -51,6 +53,7 @@
 (defn simulation-result
   [m]
   (get m :results))
+
 
 (defn t 
   "Get t from a result."
@@ -62,6 +65,12 @@
   [r]
   (get r :cumulative-reward 0))
 
+(defn chosen
+  "Get the arm chosen from a result."
+  [r]
+  (get r :chosen nil))
+
+
 (defn inc-t 
   "Increment t in a result."
   [r]
@@ -72,6 +81,11 @@
   [r reward]
   (assoc r :cumulative-reward 
          (+ (cumulative-reward r) reward)))
+
+(defn update-chosen
+  "Update the chosen position."
+  [r pos]
+  (assoc r :chosen pos))
   
 
 (defn simulate 
@@ -90,7 +104,10 @@
         pos (arm-position arms arm)
         reward (draw-bernoulli-arm (nth bandit pos))]
     {:arms (update arms pos reward)
-     :results (inc-t (update-cumulative-reward results reward))}))
+     :results (-> results
+                  (update-cumulative-reward reward)
+                  (inc-t)
+                  (update-chosen pos))}))
 
 
 (defn simulation-seq 
@@ -144,6 +161,7 @@
      (/ (cumulative-reward (simulation-result r))
         (t (simulation-result r)))))
 
+
 (defn probability-chose-best-arm
   "Percentage of times the best arm was chosen at time t."
   [best-index r]
@@ -159,6 +177,8 @@
   "
   [f s]
   (map f s))
+
+
 
 
 (defn tabulate-simulation-results

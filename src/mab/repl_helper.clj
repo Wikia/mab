@@ -57,6 +57,9 @@
 ;            #(map (fn [s] (.toString s)) %) 
 ;            (tabulate-simulation-results identity a)))
 
+; new format
+; epsilon, sim num, t, arm chosen, reward, cumulative reward
+;
 (def etest (test-epsilons bandit arms 250 1000 [0.1 0.2 0.3 0.4 0.5]))
 (def reward-csv-data (simulation-results->csv average-reward-at-t etest))
 (def best-arm-csv-data (simulation-results->csv 

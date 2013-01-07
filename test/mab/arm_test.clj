@@ -36,13 +36,13 @@
   (arm-position arms test3) => 2)
 
 
-(def init-counts (take (count mean-sample-space) (cycle [0])))
-(def init-values (take (count mean-sample-space) (cycle [0])))
-(def init-uuids (range (count mean-sample-space)))
+(def init-counts (take 5 (cycle [0])))
+(def init-values (take 5 (cycle [0])))
+(def init-uuids  (range 5))
 (def init-arms (initialize-arm-vector init-counts init-values init-uuids))
 
 (fact 
-  (arm-uuid (nth init-arms 3)) => 4)
+  (arm-uuid (nth init-arms 3)) => 3)
 
 (fact 
   (arm-uuid (nth init-arms 4)) => 4)

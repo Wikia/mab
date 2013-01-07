@@ -1,6 +1,6 @@
 (ns mab.arm)
 
-(defn arm-uuid
+(defn create-arm-uuid
   []
   (java.util.UUID/randomUUID))
 
@@ -11,9 +11,9 @@
                        :value value
                        :uuid uuid
                        :meta meta})
-  ([count value]      (create-arm count value (arm-uuid) nil))
+  ([count value]      (create-arm count value (create-arm-uuid) nil))
   ([count value uuid] (create-arm count value uuid nil))
-  ([]                 (create-arm 0 0 (arm-uuid) nil)))
+  ([]                 (create-arm 0 0 (create-arm-uuid) nil)))
 
 
 (defn initialize-arm-vector 
