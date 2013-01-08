@@ -1,13 +1,11 @@
 # mab
 
-A Clojure library designed to ... well, that part is up to you.
+A Clojure library for multi-armed bandit optimization and simulation.
 
 ## Usage
 
-FIXME
+TBD
 
 ## License
 
-Copyright © 2012 FIXME
-
-Distributed under the Eclipse Public License, the same as Clojure.
+Copyright © 2013 Collacom, Inc
