@@ -24,21 +24,6 @@
     (update-cumulative-reward (create-result) 10)) => 10)
 
 
-(let [sim  (last
-             (take 1000 
-                   (simulation-seq bandit 
-                                   (partial eg/select-arm 0.1) 
-                                   update-arm 
-                                   (initialize-arm-vector (count mean-sample-space)))))]
-  (fact
-    (reduce + 0 (map #(:count %) (:arms sim))) => 1000)
-
-  (let [avg-rwd (float (/ (cumulative-reward (:results sim))
-                          (t (:results sim))))]
-    (fact
-      (> avg-rwd 0.70) => truthy)))
-
-
 (let [sim (create-simulation-map (initialize-arm-vector 3))]
   (facts
     (extract-columns sim) => truthy

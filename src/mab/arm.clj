@@ -66,3 +66,7 @@
 (defn max-value-arm-idx [arms]
   (let [m (max-value arms)]
     (arm-position arms m)))
+
+(defn total-arm-counts
+  [arms]
+  (reduce + 0 (map arm-count arms)))

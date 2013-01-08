@@ -152,8 +152,7 @@
   "
   [bandit select update arms]
   (drop 1 (iterate (partial simulate bandit select update)
-           {:arms arms 
-            :results (create-result)})))
+                   (create-simulation-map arms))))
 
 
 (defn repeatedly-simulate-seq
