@@ -11,7 +11,6 @@
 (def arms [test1 test2 test3])
 
 
-
 (fact 
   (arm-count test-arm) => 1)
 
@@ -47,3 +46,8 @@
 (fact 
   (arm-uuid (nth init-arms 4)) => 4)
 
+(fact
+  (compute-value 1 0 100) => 100)
+
+(fact 
+  (arm-value (nth (update-arm arms 0 100) 0)) => 100)

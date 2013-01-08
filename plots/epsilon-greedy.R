@@ -15,7 +15,7 @@ ggplot(stats, aes(x = T, y = V1, group = Epsilon, color = Epsilon)) +
   xlab("Time") +
   ylab("Average Reward") +
   ggtitle("Performance of the Epsilon Greedy Algorithm")
-ggsave("plots/standard_epsilon_greedy_average_reward.pdf")
+ggsave("plots/standard_epsilon_greedy_average_reward.png")
 
 # Plot frequency of selecting correct arm as a function of time.
 # In this instance, 0 is the correct arm. 
@@ -29,7 +29,7 @@ ggplot(stats, aes(x = T, y = V1, group = Epsilon, color = Epsilon)) +
   xlab("Time") +
   ylab("Probability of Selecting Best Arm") +
   ggtitle("Accuracy of the Epsilon Greedy Algorithm")
-ggsave("plots/standard_epsilon_greedy_average_accuracy.pdf")
+ggsave("plots/standard_epsilon_greedy_average_accuracy.png")
 
 # Plot variance of chosen arms as a function of time.
 stats <- ddply(results,
@@ -40,7 +40,7 @@ ggplot(stats, aes(x = T, y = V1, group = Epsilon, color = Epsilon)) +
   xlab("Time") +
   ylab("Variance of Chosen Arm") +
   ggtitle("Variability of the Epsilon Greedy Algorithm")
-ggsave("plots/standard_epsilon_greedy_variance_choices.pdf")
+ggsave("plots/standard_epsilon_greedy_variance_choices.png")
 
 # Plot cumulative reward as a function of time.
 stats <- ddply(results,
@@ -51,4 +51,4 @@ ggplot(stats, aes(x = T, y = V1, group = Epsilon, color = Epsilon)) +
   xlab("Time") +
   ylab("Cumulative Reward of Chosen Arm") +
   ggtitle("Cumulative Reward of the Epsilon Greedy Algorithm")
-ggsave("plots/standard_epsilon_greedy_cumulative_reward.pdf")
+ggsave("plots/standard_epsilon_greedy_cumulative_reward.png")

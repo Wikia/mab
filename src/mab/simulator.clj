@@ -1,5 +1,8 @@
 (ns mab.simulator
-  (:use [mab arm]))
+  (:use [mab arm])
+  (:require [clojure.data.csv :as csv]
+            [clojure.java.io :as io]))
+
 
 (defn create-bernoulli-arm 
   "Creates a Bernoulli arm that will reward 1 with probability p."
@@ -11,6 +14,7 @@
         1)) 
     {:probability p}))
 
+
 (defn create-bandit 
   "Given a seq of reward probabilities, create a Bernoulli arm for each."
   [means]
@@ -21,6 +25,7 @@
   "Find the \"best\" arm or the arm with the highest p. For use with seq of means."
   [means]
   (.indexOf means (apply max-key max means)))
+
 
 (defn best-bandit-index
   "Find the \"best\" Bernoulli arm of the bandit."
@@ -42,14 +47,17 @@
    :reward 0
    :cumulative-reward 0})
 
+
 (defn create-simulation-map 
   [arms]
   {:arms arms 
    :results (create-result)})
 
+
 (defn simulation-arms 
   [m]
   (get m :arms))
+
 
 (defn simulation-result
   [m]
@@ -61,15 +69,18 @@
   [r]
   (get r :t 0))
 
+
 (defn cumulative-reward 
   "Get the cumulative reward from a result."
   [r]
   (get r :cumulative-reward 0))
 
+
 (defn chosen
   "Get the arm chosen from a result."
   [r]
   (get r :chosen nil))
+
 
 (defn reward
   "Get the reward from a result."
@@ -81,16 +92,19 @@
   [r]
   (update-in r [:t] inc))
 
+
 (defn update-cumulative-reward 
   "Update the cumulative reward. Adds reward to the current reward."
   [r reward]
   (assoc r :cumulative-reward 
          (+ (cumulative-reward r) reward)))
 
+
 (defn update-chosen
   "Update the chosen position."
   [r pos]
   (assoc r :chosen pos))
+
 
 (defn update-reward
   "Update the reward."
@@ -119,6 +133,7 @@
                   (update-chosen pos)
                   (update-reward reward)
                   (inc-t))}))
+
 
 
 (defn simulation-seq 
@@ -158,52 +173,20 @@
   1000
 
   "
-  [bandit select update arms sims iterations]
+  [bandit select update arms horizon iterations]
   (repeatedly iterations
-              #(take sims
+              #(take horizon
                     (simulation-seq bandit select update arms))))
 
 
 
-(defn average-reward-at-t
-  "Compute the average reward at time t."
-  [r]
-   (float 
-     (/ (cumulative-reward (simulation-result r))
-        (t (simulation-result r)))))
-
-
-(defn probability-chose-best-arm
-  "Percentage of times the best arm was chosen at time t."
-  [best-index r]
-  (float 
-    (/ (arm-count (nth (simulation-arms r) best-index))
-       (t (simulation-result r)))))
-
-
-(defn datapoint-at-t-seq
-  "Calculate a given data point at time. For example:
-
-  (datapoint-at-t-seq average-reward-at-t s)
+(defn extract-columns
+  "Extract the columns required for analysis from a simulation. This includes:
+    * time t
+    * chosen arm
+    * reward at time t
+    * cumulative reward at time t
   "
-  [f s]
-  (map f s))
-
-
-
-(defn tabulate-for-r
-  [sim & prepend]
-  (vec 
-    (map
-      #(map (fn [s] (.toString s)) %) 
-      (map (comp vec flatten)
-           (apply map vector
-                  (apply conj []
-                         (concat (map #(take (count sim) (cycle [%])) prepend)
-                                 (vector (map inc (range (count sim))))
-                                 [sim])))))))
-
-(defn extract-csv-columns
   [r]
   (vector 
     (t (simulation-result r))
@@ -213,6 +196,8 @@
 
 
 (defn simulation-seq->table
+  "Given a simulation seq, extract the columns for analysis from eath simulation. Prepends params
+  onto the extracted columns (see extract-columns)."
   [s & params]
   (loop [snum 1
          srest s
@@ -222,40 +207,19 @@
         (inc snum)
         (rest srest)
         (concat ret
-            (map #(concat params [snum] (extract-csv-columns %)) (first srest))))
+                (map #(concat params 
+                              [snum] 
+                              (extract-columns %)) 
+                     (first srest))))
       ret)))
 
 
-(defn tabulate-simulation-results
-  "Combine the results of N collections by index number starting at 1. The first column 
-  generated is the index number. For example, given:
 
-  (tabulate-simulation-results identity [4 5 6] [7 8 9]) => ((1 4 7) (2 5 8) (3 6 9))
-
-  This is helpful for generating plots by deriving values from simulations or aggregated
-  simulation results.
-
-  "
-  [result-f & cols]
-  (let [trials (vec (map inc (range (count (first cols)))))]
-    (apply 
-      map vector 
-      (concat [trials]
-              (map #(map result-f %) cols)))))
-
-
-(defn average-simulation-results
-  "Average result-f over the values in results. Convenience method for averaging a datapoint at time t over N simulations."
-  [result-f results]
-  (let [cnt (count results)]
-    (map #(/ % cnt)
-         (map 
-           #(reduce + 0 %)
-           (partition (count results)
-                      (apply interleave
-                             (map #(datapoint-at-t-seq result-f %) results)))))))
-
-
+(defn write-to-csv 
+  "Write the simulation data to the given file."
+  [file data]
+  (with-open [out-file (io/writer file)] 
+    (csv/write-csv out-file data)))
   
 
 

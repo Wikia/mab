@@ -1,26 +1,39 @@
 (ns mab.algorithms.epsilon-greedy
-  (:use [mab arm]))
+  (:use [mab arm simulator]))
 
-
-(defn compute-value [n value reward] 
-  (+ (* (/ (- n 1) n) value) (* (/ 1 n) reward)))
-
-(defn update-arm [arms arm-position reward]
-  (let [chosen-arm (increment-count (nth arms arm-position))
-        n (arm-count chosen-arm)
-        value (arm-value chosen-arm)
-        new-value (compute-value n value reward)]
-    (assoc arms arm-position 
-           (update-value chosen-arm new-value))))
-
-(defn max-value [arms]
-  (apply max-key arm-value arms))
-
-(defn max-value-arm-idx [arms]
-  (let [m (max-value arms)]
-    (arm-position arms m)))
 
 (defn select-arm [epsilon arms]
   (if (> (rand 1) epsilon)
     (nth arms (max-value-arm-idx arms))
     (nth arms (rand-int (count arms)))))
+
+
+(defn test-algorithm
+  "Tests the algorithm.
+
+  sample-space: a seq of mean reward probabilities e.g. [0.1 0.9 0.1 0.1 0.1]
+  horizon: pulls of arms e.g. 250
+  iterations: how many iterations of horizon pulls e.g. 5000
+  epsilons: epsilons to test e.g [0.1 0.2 0.3]
+
+  Returns a hashmap of epsilon => tabular result with columns
+    epsilon, sim num, t arm chosen, reward, cumulative reward at t
+
+  "
+  [sample-space horizon iterations epsilons]
+  (let [n (count sample-space)
+        arms (initialize-arm-vector n)
+        bandit (create-bandit sample-space)
+        best-arm (best-arm-index sample-space)]
+    (println (format "Best arm is %d" best-arm))
+    (map (fn [e]
+           (simulation-seq->table 
+             (repeatedly-simulate-seq bandit 
+                                      (partial select-arm e) 
+                                      update-arm 
+                                      arms
+                                      horizon 
+                                      iterations) 
+             e))
+         epsilons)))
+
