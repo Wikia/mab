@@ -30,7 +30,10 @@
         identity 
         (map #(average-simulation-results result-f %) sims))))
 
-(def mean-sample-space [0.1 0.1 0.1 0.1 0.9])
+; don't make the best arm the last one or it will be chosen by default on the
+; first run since the value for all of the arms at the start is 0. OTW, you
+; will skew the results and get odd results
+(def mean-sample-space [0.9 0.1 0.1 0.1 0.1])
 (def best-arm (best-arm-index mean-sample-space))
 (def bandit (create-bandit mean-sample-space)) 
 
@@ -61,7 +64,7 @@
 ; epsilon, sim num, t, arm chosen, reward, cumulative reward
 ;
 
-(def etest (test-epsilons bandit arms 250 100 [0.1 0.2 0.3 0.4 0.5]))
+(def etest (test-epsilons bandit arms 250 500 [0.1 0.2 0.3 0.4 0.5]))
 
 (def reward-csv-data (simulation-results->csv average-reward-at-t etest))
 (def best-arm-csv-data (simulation-results->csv 

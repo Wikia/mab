@@ -18,10 +18,11 @@ ggplot(stats, aes(x = T, y = V1, group = Epsilon, color = Epsilon)) +
 ggsave("plots/standard_epsilon_greedy_average_reward.pdf")
 
 # Plot frequency of selecting correct arm as a function of time.
-# In this instance, 5 is the correct arm.
+# In this instance, 0 is the correct arm. 
+# ***** see mean-sample-space and best-arm from the repl-helper for the best arm *****
 stats <- ddply(results,
                c("Epsilon", "T"),
-               function (df) {mean(df$ChosenArm == 5)})
+               function (df) {mean(df$ChosenArm == 0)})
 ggplot(stats, aes(x = T, y = V1, group = Epsilon, color = Epsilon)) +
   geom_line() +
   ylim(0, 1) +

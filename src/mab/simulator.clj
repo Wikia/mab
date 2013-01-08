@@ -217,15 +217,12 @@
   (loop [snum 1
          srest s
          ret []]
-    (println snum)
     (if (not (empty? srest))
       (recur
         (inc snum)
         (rest srest)
         (concat ret
-          (tabulate-for-r 
-            (map extract-csv-columns (first srest)) 
-            params snum)))
+            (map #(concat params [snum] (extract-csv-columns %)) (first srest))))
       ret)))
 
 
