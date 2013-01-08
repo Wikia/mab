@@ -28,7 +28,7 @@
              (take 1000 
                    (simulation-seq bandit 
                                    (partial eg/select-arm 0.1) 
-                                   eg/update-arm 
+                                   update-arm 
                                    (initialize-arm-vector (count mean-sample-space)))))]
   (fact
     (reduce + 0 (map #(:count %) (:arms sim))) => 1000)
@@ -36,16 +36,11 @@
   (let [avg-rwd (float (/ (cumulative-reward (:results sim))
                           (t (:results sim))))]
     (fact
-      (> avg-rwd 0.75) => truthy)))
+      (> avg-rwd 0.70) => truthy)))
 
 
-(let [table (tabulate-simulation-results identity [4 5 6] [7 8 9])]
-  (fact (first (first table)) => 1)
-  (fact (second (first table)) => 4)
-  (fact (first (second table)) => 2)
-  (fact (second (second table)) => 5))
-
-(let [v (average-simulation-results identity [(range 10) (map inc (range 10)) (map inc (range 10))])]
-  (fact (first v) => 2/3)
-  (fact (second v) => 5/3))
-
+(let [sim (create-simulation-map (initialize-arm-vector 3))]
+  (facts
+    (extract-columns sim) => truthy
+    (count (extract-columns sim)) => 4))
+    

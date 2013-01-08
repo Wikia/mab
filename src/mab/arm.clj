@@ -1,7 +1,6 @@
 (ns mab.arm)
 
-(defn create-arm-uuid
-  []
+(defn create-arm-uuid []
   (java.util.UUID/randomUUID))
 
 (defn create-arm
@@ -47,3 +46,23 @@
 
 (defn arm-position [arms arm]
   (.indexOf arms arm))
+
+
+(defn compute-value [n value reward] 
+  (+ (* (/ (- n 1) n) value) (* (/ 1 n) reward)))
+
+
+(defn update-arm [arms arm-position reward]
+  (let [chosen-arm (increment-count (nth arms arm-position))
+        n (arm-count chosen-arm)
+        value (arm-value chosen-arm)
+        new-value (compute-value n value reward)]
+    (assoc arms arm-position 
+           (update-value chosen-arm new-value))))
+
+(defn max-value [arms]
+  (apply max-key arm-value arms))
+
+(defn max-value-arm-idx [arms]
+  (let [m (max-value arms)]
+    (arm-position arms m)))

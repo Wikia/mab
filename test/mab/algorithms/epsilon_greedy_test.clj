@@ -10,11 +10,6 @@
 
 (def arms [test0 test1 test2 test3])
 
-(fact
-  (mab-eg/compute-value 1 0 100) => 100)
-
-(fact 
-  (arm-value (nth (mab-eg/update-arm arms 0 100) 0)) => 100)
 
 ; epsilon at 0 should always pick the max-value arm
 (fact
