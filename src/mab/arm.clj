@@ -16,12 +16,8 @@
 (defn initialize-arm-vector
   "Create a vector af initialized arms."
   ([n] (vec (repeatedly n  #(create-arm 0 0))))
-  ([counts values] (vec
-                     (map #(apply create-arm %)
-                          (partition 2 (interleave counts values)))))
-  ([counts values uuids] (vec
-                           (map #(apply create-arm %)
-                                (partition 3 (interleave counts values uuids))))))
+  ([counts values] (vec (map create-arm counts values)))
+  ([counts values uuids] (vec (map create-arm counts values uuids))))
 
 (defn arm-count [arm]
   (get arm :count 0))
@@ -47,17 +43,15 @@
 (defn arm-position [arms arm]
   (.indexOf arms arm))
 
-
 (defn compute-value [n value reward] 
   (+ (* (/ (- n 1) n) value) (* (/ 1 n) reward)))
-
 
 (defn update-arm [arms arm-position reward]
   (let [chosen-arm (increment-count (nth arms arm-position))
         n (arm-count chosen-arm)
         value (arm-value chosen-arm)
         new-value (compute-value n value reward)]
-    (assoc arms arm-position 
+    (assoc arms arm-position
            (update-value chosen-arm new-value))))
 
 (defn max-value [arms]
