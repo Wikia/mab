@@ -1,6 +1,6 @@
 (ns mab.repl-helper
   (:use [clojure pprint]
-        [mab arm simulator])
+        [mab arm simulator util])
   (:require [mab.algorithms.epsilon-greedy :as eg]
             [clojure.data.csv :as csv]
             [clojure.java.io :as io]))

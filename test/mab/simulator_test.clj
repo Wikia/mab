@@ -36,5 +36,11 @@
   (let [avg-rwd (float (/ (cumulative-reward (:results sim))
                           (t (:results sim))))]
     (fact
-      (> avg-rwd 0.75) => truthy)))
+      (> avg-rwd 0.70) => truthy)))
 
+
+(let [sim (create-simulation-map (initialize-arm-vector 3))]
+  (facts
+    (extract-columns sim) => truthy
+    (count (extract-columns sim)) => 4))
+    

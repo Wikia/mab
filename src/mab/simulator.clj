@@ -1,7 +1,5 @@
 (ns mab.simulator
-  (:use [mab arm])
-  (:require [clojure.data.csv :as csv]
-            [clojure.java.io :as io]))
+  (:use [mab arm]))
 
 
 (defn create-bernoulli-arm 
@@ -188,11 +186,7 @@
     * cumulative reward at time t
   "
   [r]
-  (vector 
-    (t (simulation-result r))
-    (chosen (simulation-result r))
-    (reward (simulation-result r))
-    (cumulative-reward (simulation-result r))))
+    ((juxt t chosen reward cumulative-reward) (simulation-result r)))
 
 
 (defn simulation-seq->table
@@ -212,15 +206,4 @@
                               (extract-columns %)) 
                      (first srest))))
       ret)))
-
-
-
-(defn write-to-csv 
-  "Write the simulation data to the given file."
-  [file data]
-  (with-open [out-file (io/writer file)] 
-    (csv/write-csv out-file data)))
-  
-
-
 
