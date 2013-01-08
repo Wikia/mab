@@ -39,6 +39,7 @@
   []
   {:t 0 
    :chosen nil 
+   :reward 0
    :cumulative-reward 0})
 
 (defn create-simulation-map 
@@ -70,6 +71,10 @@
   [r]
   (get r :chosen nil))
 
+(defn reward
+  "Get the reward from a result."
+  [r]
+  (get r :reward 0))
 
 (defn inc-t 
   "Increment t in a result."
@@ -86,6 +91,11 @@
   "Update the chosen position."
   [r pos]
   (assoc r :chosen pos))
+
+(defn update-reward
+  "Update the reward."
+  [r reward]
+  (assoc r :reward reward))
   
 
 (defn simulate 
@@ -106,8 +116,9 @@
     {:arms (update arms pos reward)
      :results (-> results
                   (update-cumulative-reward reward)
-                  (inc-t)
-                  (update-chosen pos))}))
+                  (update-chosen pos)
+                  (update-reward reward)
+                  (inc-t))}))
 
 
 (defn simulation-seq 
@@ -179,6 +190,43 @@
   (map f s))
 
 
+
+(defn tabulate-for-r
+  [sim & prepend]
+  (vec 
+    (map
+      #(map (fn [s] (.toString s)) %) 
+      (map (comp vec flatten)
+           (apply map vector
+                  (apply conj []
+                         (concat (map #(take (count sim) (cycle [%])) prepend)
+                                 (vector (map inc (range (count sim))))
+                                 [sim])))))))
+
+(defn extract-csv-columns
+  [r]
+  (vector 
+    (t (simulation-result r))
+    (chosen (simulation-result r))
+    (reward (simulation-result r))
+    (cumulative-reward (simulation-result r))))
+
+
+(defn simulation-seq->table
+  [s & params]
+  (loop [snum 1
+         srest s
+         ret []]
+    (println snum)
+    (if (not (empty? srest))
+      (recur
+        (inc snum)
+        (rest srest)
+        (concat ret
+          (tabulate-for-r 
+            (map extract-csv-columns (first srest)) 
+            params snum)))
+      ret)))
 
 
 (defn tabulate-simulation-results

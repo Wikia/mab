@@ -30,7 +30,7 @@
         identity 
         (map #(average-simulation-results result-f %) sims))))
 
-(def mean-sample-space (shuffle [0.1 0.1 0.1 0.1 0.9])) 
+(def mean-sample-space [0.1 0.1 0.1 0.1 0.9])
 (def best-arm (best-arm-index mean-sample-space))
 (def bandit (create-bandit mean-sample-space)) 
 
@@ -60,7 +60,9 @@
 ; new format
 ; epsilon, sim num, t, arm chosen, reward, cumulative reward
 ;
-(def etest (test-epsilons bandit arms 250 1000 [0.1 0.2 0.3 0.4 0.5]))
+
+(def etest (test-epsilons bandit arms 250 100 [0.1 0.2 0.3 0.4 0.5]))
+
 (def reward-csv-data (simulation-results->csv average-reward-at-t etest))
 (def best-arm-csv-data (simulation-results->csv 
                          (partial probability-chose-best-arm (best-bandit-index bandit)) etest))
@@ -68,4 +70,15 @@
 ; top -o rsize -s 5 -n 20
 ;
 ;(write-to-csv "plots/epsilon-greedy-reward.csv" reward-csv-data)
-;(write-to-csv "plots/epsilon-greedy-best-arm.csv" best-arm-csv-data)
+;(write-to-csv "plots/epsilon-greedy-best-arm.csv" best-arm-csv-data)o
+
+
+
+;;;;;;;;;;;;
+;(def data (map (fn [r] (map #(tabulate-for-r (map extract-csv-columns %)) r)) etest))
+;(def data (tabulate-for-r (map extract-csv-columns (first (first etest))) 1.0 1))
+;(def d (simulation-seq->table (first etest) 0.1))
+;(write-to-csv "plots/epsilon-greedy.csv" d)
+
+
+
