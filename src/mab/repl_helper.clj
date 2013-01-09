@@ -17,7 +17,7 @@
 ; don't make the best arm the last one or it will be chosen by default on the
 ; first run since the value for all of the arms at the start is 0. OTW, you
 ; will skew the results and get odd results
-(def mean-sample-space [0.9 0.1 0.1 0.1 0.1])
+(def mean-sample-space [0.1 0.9 0.1 0.1 0.1])
 
 (def bandit (create-bandit mean-sample-space))
 (def etest (eg/test-algorithm mean-sample-space 250 1000 [0.1 0.2 0.3 0.4 0.5]))

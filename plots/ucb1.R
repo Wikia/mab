@@ -20,7 +20,7 @@ ggsave("plots/ucb1_average_reward.png")
 # In this instance, 0 is the correct arm.
 stats <- ddply(results,
                c("T"),
-               function (df) {mean(df$ChosenArm == 0)})
+               function (df) {mean(df$ChosenArm == 1)})
 ggplot(stats, aes(x = T, y = V1)) +
   geom_line() +
   ylim(0, 1) +

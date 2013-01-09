@@ -11,3 +11,6 @@ pom.xml
 .lein-plugins
 .DS_Store
 plots/*.png
+plots/*.pdf
+plots/*.jpeg
+.Rhistory

@@ -22,7 +22,7 @@ ggsave("plots/standard_epsilon_greedy_average_reward.png")
 # ***** see mean-sample-space and best-arm from the repl-helper for the best arm *****
 stats <- ddply(results,
                c("Epsilon", "T"),
-               function (df) {mean(df$ChosenArm == 0)})
+               function (df) {mean(df$ChosenArm == 1)})
 ggplot(stats, aes(x = T, y = V1, group = Epsilon, color = Epsilon)) +
   geom_line() +
   ylim(0, 1) +
