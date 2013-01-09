@@ -3,6 +3,7 @@
         [mab arm simulator util])
   (:require [mab.algorithms.epsilon-greedy :as eg]
             [mab.algorithms.ucb1 :as ucb1]
+            [mab.algorithms.random :as r]
             [clojure.data.csv :as csv]
             [clojure.java.io :as io]))
 
@@ -32,8 +33,15 @@
                          10 
                          1))
 
-;(write-to-csv "plots/epsilon-greedy.csv" etest)
 
-; (def d (ucb1/test-algorithm [0.0024 0.0016 0.0011 0.001 0.0008 0.0008 0.0008] 1000000 2)
+(def real-sample-space [0.0016 0.0024 0.0016 0.0011 0.001 0.0008 0.0008 0.0008])
+
+;(def etest (eg/test-algorithm real-sample-space 10000 100 [0.1 0.2 0.3 0.4 0.5]))
+(def etest (eg/test-algorithm real-sample-space 10000 100 [0.3 0.4 0.5]))
+;(def ef (future (write-to-csv "plots/epsilon-greedy.csv" (apply concat etest))))
+(def ucbtest (ucb1/test-algorithm real-sample-space 10000 100))
+;(def uf (future (write-to-csv "plots/ucb1.csv" ucbtest)))
+(def rtest (r/test-algorithm real-sample-space 10000 100))
+;(def rf (future (write-to-csv "plots/random.csv" rtest)))
 
 
