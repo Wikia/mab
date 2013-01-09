@@ -34,5 +34,6 @@
 
 ;(write-to-csv "plots/epsilon-greedy.csv" etest)
 
+; (def d (ucb1/test-algorithm [0.0024 0.0016 0.0011 0.001 0.0008 0.0008 0.0008] 1000000 2)
 
 

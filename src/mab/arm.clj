@@ -44,7 +44,9 @@
   (.indexOf arms arm))
 
 (defn compute-value [n value reward] 
-  (+ (* (/ (- n 1) n) value) (* (/ 1 n) reward)))
+  (+ 
+    (* (/ (- n 1) n) value) 
+    (* (/ 1 n) reward)))
 
 (defn update-arm [arms arm-position reward]
   (let [chosen-arm (increment-count (nth arms arm-position))
