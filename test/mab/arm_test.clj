@@ -1,5 +1,6 @@
 (ns mab.arm-test
   (:use [midje.sweet]
+        [clojure pprint]
         [mab arm]))
 
 (def test-arm (create-arm 1 2 {}))
@@ -11,28 +12,33 @@
 (def arms [test1 test2 test3])
 
 
-(fact 
-  (arm-count test-arm) => 1)
-
-(fact 
-  (arm-value test-arm) => 2)
-
-(fact
+(facts "basic arm tests"
+  (arm-count test-arm) => 1
+  (arm-value test-arm) => 2
   (arm-count 
-    (update-count test-arm 2)) => 2)
-
-(fact
+    (update-count test-arm 2)) => 2
   (arm-count 
-    (increment-count test-arm)) => 2)
-
-(fact
-  (arm-position arms test1) => 0)
-
-(fact
-  (arm-position arms test2) => 1)
-
-(fact
+    (increment-count test-arm)) => 2
+  (arm-position arms test1) => 0
+  (arm-position arms test2) => 1
   (arm-position arms test3) => 2)
+
+(facts "remove by uuid"
+  (count (remove-by-uuid arms (arm-uuid test3))) => 2
+  (count 
+    (remove-by-uuid 
+      (remove-by-uuid 
+        (remove-by-uuid arms (arm-uuid test3))
+        (arm-uuid test2))
+      (arm-uuid test1))) => 0)
+
+(facts "select n arms"
+       (count (select-n-arms (fn [a]
+                               (nth a (rand-int (count a)))) 
+                             arms (count arms))) => (count arms)
+       (count (select-n-arms (fn [a]
+                               (nth a (rand-int (count a)))) 
+                             arms (inc (count arms)))) => (count arms))
 
 
 (def init-counts (take 5 (cycle [0])))

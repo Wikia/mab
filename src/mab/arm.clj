@@ -56,13 +56,33 @@
     (assoc arms arm-position
            (update-value chosen-arm new-value))))
 
-(defn max-value [arms]
+(defn max-value 
+  [arms]
   (apply max-key arm-value arms))
 
-(defn max-value-arm-idx [arms]
+(defn max-value-arm-idx 
+  [arms]
   (let [m (max-value arms)]
     (arm-position arms m)))
 
 (defn total-arm-counts
   [arms]
   (reduce + 0 (map arm-count arms)))
+
+
+(defn remove-by-uuid 
+  "Remove the arm with \"uuid\" from \"arms\"."
+  [arms uuid]
+  (filter #(not (= (arm-uuid %) uuid)) arms))
+
+
+(defn select-n-arms 
+  "Selects n distinct arms. Good for selecting n distinct arms using a given selection funcition."
+  [selectfn arms n]
+  (loop [a arms
+         ret []]
+    (cond (or (= (count ret) n) (empty? a)) ret
+          :else 
+          (let [selected (selectfn a)]
+            (recur (remove-by-uuid a (arm-uuid selected)) (conj ret selected))))))
+
