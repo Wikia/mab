@@ -1,19 +1,22 @@
 (ns mab.algorithms.ucb1
-  (:use [mab arm simulator]))
+  (:use [mab simulator arm]))
 
-(defn untested-arm [arms]
+(defn untested-arm 
+  [arms]
   (first (take 1 (filter #(= (arm-count %) 0) arms))))
 
-(defn update-curiosity-bonus [arms total-draws]
-  (vec (map (fn [a]
-              (if (and (> (arm-count a) 0) 
-                       (> total-draws 0))
-                  (let [bonus (/ (Math/sqrt (* 2 (Math/log total-draws))) 
-                                 (float (arm-count a)))
-                        update (+ (float (arm-value a)) bonus)]
-                    (update-value a update))
-                a)) 
-            arms)))
+(defn update-curiosity-bonus 
+  [arm total-draws]
+  (if (and (> (arm-count arm) 0) 
+           (> total-draws 0))
+    (let [bonus (/ (Math/sqrt (* 2 (Math/log total-draws))) 
+                   (float (arm-count arm)))
+          update (+ (float (arm-value arm)) bonus)]
+      (update-value arm update))
+    arm)) 
+
+(defn update-curiosity-bonus-all [arms total-draws]
+  (vec (map #(update-curiosity-bonus % total-draws) arms)))
 
 
 (defn select-arm [arms]
@@ -33,10 +36,7 @@
     (simulation-seq->table 
       (repeatedly-simulate-seq bandit 
                                select-arm
-                               (fn [a p r]
-                                 (-> a 
-                                     (update-curiosity-bonus (total-arm-counts arms))
-                                     (update-arm p r)))
+                               update-arm
                                arms
                                horizon 
                                iterations))))

@@ -23,10 +23,7 @@
 (let [sim (last (take 1000 (simulation-seq
                              bandit
                              mab-ucb1/select-arm
-                             (fn [a p r]
-                               (-> a 
-                                   (mab-ucb1/update-curiosity-bonus (total-arm-counts arms))
-                                   (update-arm p r)))
+                             update-arm
                              (initialize-arm-vector (count bandit)))))
       avg-rwd (float (/ (cumulative-reward (:results sim))
                         (t (:results sim))))]
