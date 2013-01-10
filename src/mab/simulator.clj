@@ -20,16 +20,10 @@
           (map create-bernoulli-arm means)))
 
 
-(defn best-arm-index 
+(defn best-mean-index 
   "Find the \"best\" arm or the arm with the highest p. For use with seq of means."
   [means]
   (.indexOf means (apply max-key max means)))
-
-
-(defn best-bandit-index
-  "Find the \"best\" Bernoulli arm of the bandit."
-  [bandit]
-  (.indexOf bandit (apply max-key #(get (meta %) :probability) bandit)))
 
 
 (defn draw-bernoulli-arm 

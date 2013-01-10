@@ -14,7 +14,7 @@
   (count (create-bandit mean-sample-space)) => (count mean-sample-space))
 
 (fact
-  (best-arm-index [0 2 5 1 3]) => 2)
+  (best-mean-index [0 2 5 1 3]) => 2)
 
 (fact
   (t (inc-t (create-result))) => 1)

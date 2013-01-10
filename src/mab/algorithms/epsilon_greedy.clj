@@ -26,7 +26,7 @@
   (let [n (count sample-space)
         arms (initialize-arm-map n)
         bandit (create-bandit sample-space)
-        best-arm (best-arm-index sample-space)]
+        best-arm (best-mean-index sample-space)]
     (println (format "Best arm is %d" best-arm))
     (map (fn [e]
            (simulation-seq->table 
