@@ -40,6 +40,7 @@
 (defn arm-uuid [arm]
   (get arm :uuid))
 
+; really arm-id
 (defn arm-position [arms arm]
   (.indexOf arms arm))
 
@@ -48,12 +49,12 @@
     (* (/ (- n 1) n) value) 
     (* (/ 1 n) reward)))
 
-(defn update-arm [arms arm-position reward]
-  (let [chosen-arm (increment-count (nth arms arm-position))
+(defn update-arm [arms pos reward]
+  (let [chosen-arm (increment-count (nth arms pos))
         n (arm-count chosen-arm)
         value (arm-value chosen-arm)
         new-value (compute-value n value reward)]
-    (assoc arms arm-position
+    (assoc arms pos
            (update-value chosen-arm new-value))))
 
 (defn max-value 
@@ -73,6 +74,7 @@
 (defn remove-by-uuid 
   "Remove the arm with \"uuid\" from \"arms\"."
   [arms uuid]
+  ; replace with filterv?
   (filter #(not (= (arm-uuid %) uuid)) arms))
 
 
@@ -84,5 +86,6 @@
     (cond (or (= (count ret) n) (empty? a)) ret
           :else 
           (let [selected (selectfn a)]
+            ; this would be faster using dissoc and a map
             (recur (remove-by-uuid a (arm-uuid selected)) (conj ret selected))))))
 
