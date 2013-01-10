@@ -1,12 +1,16 @@
 (ns mab.algorithms.random
   (:use [mab arm simulator]))
 
+; purely for testing and comparison purposes. 
 
-(defn select-arm [arms]
-  (nth arms (rand-int (count arms))))
+(defn select-arm 
+  "Select an arm at random 100% of the time."
+  [arms]
+  (random-arm-tuple arms))
 
 
 (defn test-algorithm
+  "Test using sample space over horizon for the given iterations."
   [sample-space horizon iterations]
   (let [n (count sample-space)
         arms (initialize-arm-map n)

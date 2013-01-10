@@ -7,7 +7,7 @@
   [epsilon arms]
   (if (> (rand 1) epsilon)
     (max-value-tuple arms)
-    (random-arm arms)))
+    (random-arm-tuple arms)))
 
 
 (defn test-algorithm

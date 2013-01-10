@@ -5,8 +5,7 @@
   "Find any untested arms. An untest arm has a count of 0."
   [arms]
   (first 
-    (take 1 
-          (filter #(= (arm-count (tuple-arm %)) 0) arms))))
+    (filter #(= (arm-count (tuple-arm %)) 0) arms)))
 
 (defn update-curiosity-bonus
   "Update the curiosity bonus for a given arm."

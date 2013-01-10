@@ -95,11 +95,11 @@
   [arms]
   (nth (keys arms) (rand-int (count arms))))
 
-(defn random-arm
+
+(defn random-arm-tuple
   "Get a random arm."
   [arms]
-  (let [idx (random-arm-idx arms)]
-    [idx (arm-by-idx arms idx)]))
+  (nth (seq arms) (rand-int (count arms))))
 
 
 (defn remove-arm

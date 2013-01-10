@@ -31,6 +31,7 @@
 
 (def etest (eg/test-algorithm mean-sample-space 250 1000 [0.1 0.2 0.3 0.4 0.5]))
 (def ucbtest (ucb1/test-algorithm mean-sample-space 250 1000))
+(def random (r/test-algorithm mean-sample-space 250 1000))
 
 (def real-sample-space [0.0016 0.0024 0.0016 0.0011 0.001 0.0008 0.0008 0.0008])
 

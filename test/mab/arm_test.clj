@@ -46,9 +46,9 @@
 
 
 (facts "arm tuples"
-       (tuple-idx (random-arm arms)) => number?
-       (arm-count (tuple-arm (random-arm arms))) => number?
-       (arm-value (tuple-arm (random-arm arms))) => number?)
+       (tuple-idx (random-arm-tuple arms)) => number?
+       (arm-count (tuple-arm (random-arm-tuple arms))) => number?
+       (arm-value (tuple-arm (random-arm-tuple arms))) => number?)
 
 (fact 
   (total-arm-counts (initialize-arm-map (range 1 5) (range 1 5))) => 10)
@@ -63,17 +63,17 @@
              band 0.6]
          (> band 
             (- 5 (/ (reduce + 0 (take sample-size (repeatedly #(random-arm-idx (initialize-arm-map 10))))) sample-size))) => truthy)
-       (random-arm arms) => truthy
-       (count (random-arm arms)) => 2
-       (first (random-arm arms)) => truthy
-       (second (random-arm arms)) => truthy
-       (arm-count (random-arm arms)) => 0
-       (arm-value (random-arm arms)) => 0)
+       (random-arm-tuple arms) => truthy
+       (count (random-arm-tuple arms)) => 2
+       (first (random-arm-tuple arms)) => truthy
+       (second (random-arm-tuple arms)) => truthy
+       (arm-count (random-arm-tuple arms)) => 0
+       (arm-value (random-arm-tuple arms)) => 0)
 
 (facts "select n arms"
-       (count (select-n-arms random-arm 
+       (count (select-n-arms random-arm-tuple 
                              arms (count arms))) => (count arms)
-       (count (select-n-arms random-arm 
+       (count (select-n-arms random-arm-tuple 
                              arms (inc (count arms)))) => (count arms))
 
 
