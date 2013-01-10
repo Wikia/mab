@@ -9,7 +9,7 @@
 (defn test-algorithm
   [sample-space horizon iterations]
   (let [n (count sample-space)
-        arms (initialize-arm-vector n)
+        arms (initialize-arm-map n)
         bandit (create-bandit sample-space)
         best-arm (best-arm-index sample-space)]
     (println (format "Best arm is %d" best-arm))

@@ -2,10 +2,14 @@
   (:use [mab simulator arm]))
 
 (defn untested-arm
+  "Find any untested arms. An untest arm has a count of 0."
   [arms]
-  (first (take 1 (filter #(= (arm-count %) 0) arms))))
+  (first 
+    (take 1 
+          (filter #(= (arm-count (tuple-arm %)) 0) arms))))
 
 (defn update-curiosity-bonus
+  "Update the curiosity bonus for a given arm."
   [arm total-draws]
   (if (and (> (arm-count arm) 0)
            (> total-draws 0))
@@ -15,21 +19,25 @@
       (update-value arm update))
     arm))
 
-(defn update-curiosity-bonus-all [arms total-draws]
-  (vec (map #(update-curiosity-bonus % total-draws) arms)))
+(defn update-curiosity-bonus-all 
+  "Update the curiosity bonus for all of the arms."
+  [arms total-draws]
+  (map-on-arm-vals #(update-curiosity-bonus % total-draws) arms))
 
 
-(defn select-arm [arms]
+(defn select-arm 
+  "Select an arm."
+  [arms]
   (if-let [arm (untested-arm arms)]
     arm
-    (nth arms
-         (max-value-arm-idx
-           (update-curiosity-bonus arms (total-arm-counts arms))))))
+    (max-value-tuple (update-curiosity-bonus-all arms (total-arm-counts arms)))))
+
 
 (defn test-algorithm
+  "Test the algorithm using the given sample space over horizon iterations times."
   [sample-space horizon iterations]
   (let [n (count sample-space)
-        arms (initialize-arm-vector n)
+        arms (initialize-arm-map n)
         bandit (create-bandit sample-space)
         best-arm (best-arm-index sample-space)]
     (println (format "Best arm is %d" best-arm))

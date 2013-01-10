@@ -16,7 +16,8 @@
 (defn create-bandit 
   "Given a seq of reward probabilities, create a Bernoulli arm for each."
   [means]
-  (map create-bernoulli-arm means))
+  (zipmap (range (count means)) 
+          (map create-bernoulli-arm means)))
 
 
 (defn best-arm-index 
@@ -122,13 +123,13 @@
   
   "
   [bandit select update {:keys [arms results]}] 
-  (let [arm (select arms)
-        pos (arm-position arms arm)
-        reward (draw-bernoulli-arm (nth bandit pos))]
-    {:arms (update arms pos reward)
+  (let [tuple (select arms)
+        idx (tuple-idx tuple)
+        reward (draw-bernoulli-arm (arm-by-idx bandit idx))]
+    {:arms (update arms idx reward)
      :results (-> results
                   (update-cumulative-reward reward)
-                  (update-chosen pos)
+                  (update-chosen idx)
                   (update-reward reward)
                   (inc-t))}))
 
@@ -147,7 +148,7 @@
           (simulation-seq bandit 
                           (partial eg/select-arm 0.1) 
                           eg/update-arm 
-                          (initialize-arm-vector (count mean-sample-space)))))
+                          (initialize-arm-map (count mean-sample-space)))))
   
   "
   [bandit select update arms]
@@ -162,7 +163,7 @@
   (repeatedly-simulate-seq bandit 
                   (partial eg/select-arm 0.1) 
                   eg/update-arm 
-                  (initialize-arm-vector (count mean-sample-space))
+                  (initialize-arm-map (count mean-sample-space))
                   250 1000)
 
   [...250]

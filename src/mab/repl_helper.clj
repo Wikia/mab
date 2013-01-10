@@ -20,14 +20,11 @@
 (def mean-sample-space [0.1 0.9 0.1 0.1 0.1])
 
 (def bandit (create-bandit mean-sample-space))
-(def arms (initialize-arm-vector (count mean-sample-space)))
+(def arms (initialize-arm-map (count mean-sample-space)))
 
 (def s (repeatedly-simulate-seq bandit 
                          ucb1/select-arm
-                         (fn [a p r]
-                           (-> a 
-                               (ucb1/update-curiosity-bonus (total-arm-counts arms))
-                               (update-arm p r)))
+                         update-arm
                          arms
                          10 
                          1))
