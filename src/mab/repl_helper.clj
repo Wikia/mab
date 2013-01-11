@@ -20,20 +20,18 @@
 (def mean-sample-space [0.1 0.9 0.1 0.1 0.1])
 
 (def bandit (create-bandit mean-sample-space))
-(def arms (initialize-arm-vector (count mean-sample-space)))
+(def arms (initialize-arm-map (count mean-sample-space)))
 
 (def s (repeatedly-simulate-seq bandit 
                          ucb1/select-arm
-                         (fn [a p r]
-                           (-> a 
-                               (ucb1/update-curiosity-bonus (total-arm-counts arms))
-                               (update-arm p r)))
+                         update-arm
                          arms
                          10 
                          1))
 
 (def etest (eg/test-algorithm mean-sample-space 250 1000 [0.1 0.2 0.3 0.4 0.5]))
 (def ucbtest (ucb1/test-algorithm mean-sample-space 250 1000))
+(def random (r/test-algorithm mean-sample-space 250 1000))
 
 (def real-sample-space [0.0016 0.0024 0.0016 0.0011 0.001 0.0008 0.0008 0.0008])
 

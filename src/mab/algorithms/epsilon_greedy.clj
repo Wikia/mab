@@ -2,10 +2,12 @@
   (:use [mab arm simulator]))
 
 
-(defn select-arm [epsilon arms]
+(defn select-arm 
+  "Select an arm using the given epsilon for exploration."
+  [epsilon arms]
   (if (> (rand 1) epsilon)
-    (nth arms (max-value-arm-idx arms))
-    (nth arms (rand-int (count arms)))))
+    (max-value-tuple arms)
+    (random-arm-tuple arms)))
 
 
 (defn test-algorithm
@@ -22,9 +24,9 @@
   "
   [sample-space horizon iterations epsilons]
   (let [n (count sample-space)
-        arms (initialize-arm-vector n)
+        arms (initialize-arm-map n)
         bandit (create-bandit sample-space)
-        best-arm (best-arm-index sample-space)]
+        best-arm (best-mean-index sample-space)]
     (println (format "Best arm is %d" best-arm))
     (map (fn [e]
            (simulation-seq->table 

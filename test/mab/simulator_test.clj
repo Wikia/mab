@@ -14,7 +14,7 @@
   (count (create-bandit mean-sample-space)) => (count mean-sample-space))
 
 (fact
-  (best-arm-index [0 2 5 1 3]) => 2)
+  (best-mean-index [0 2 5 1 3]) => 2)
 
 (fact
   (t (inc-t (create-result))) => 1)
@@ -24,7 +24,7 @@
     (update-cumulative-reward (create-result) 10)) => 10)
 
 
-(let [sim (create-simulation-map (initialize-arm-vector 3))]
+(let [sim (create-simulation-map (initialize-arm-map 3))]
   (facts
     (extract-columns sim) => truthy
     (count (extract-columns sim)) => 4))

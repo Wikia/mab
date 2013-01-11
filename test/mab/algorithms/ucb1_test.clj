@@ -5,30 +5,37 @@
 
 
 (def num-arms 10)
-(def init-counts (take num-arms (cycle [0])))
-(def init-values (take num-arms (cycle [0])))
-(def init-uuids  (range num-arms))
-(def arms (initialize-arm-vector init-counts init-values init-uuids))
+(def arms (initialize-arm-map num-arms))
 
 (def mean-sample-space [0.9 0.1 0.1 0.1 0.1])
 (def bandit (create-bandit mean-sample-space))
 
-(facts "ucb1/untested-arm"
+(facts "untested arm"
   (mab-ucb1/untested-arm arms) => truthy
   (arm-count (mab-ucb1/untested-arm arms)) => 0
-  (arm-uuid (mab-ucb1/untested-arm arms)) => 0
-  (mab-ucb1/untested-arm (map increment-count arms)) => falsey)
+  (mab-ucb1/untested-arm (map-on-arm-vals increment-count arms)) => falsey)
 
+(facts "update curiosity bonus"
+       ; these should all be > 1
+       (filter false? (vals 
+                         (map-on-arm-vals #(> (arm-value %) 1) 
+                                          (mab-ucb1/update-curiosity-bonus-all 
+                                            (map-on-arm-vals increment-count arms) 4)))) => empty?)
 
-(let [sim (last (take 1000 (simulation-seq
-                             bandit
-                             mab-ucb1/select-arm
-                             update-arm
-                             (initialize-arm-vector (count bandit)))))
-      avg-rwd (float (/ (cumulative-reward (:results sim))
-                        (t (:results sim))))]
-  (println (format "Average reward for UCB1 is %2.2f" avg-rwd))
+(facts "select arm"
+       (let [chosen (mab-ucb1/select-arm (map-on-arm-vals increment-count arms))]
+         (tuple-idx chosen) => number?
+         (arm-value (tuple-arm chosen)) => #(> % 0)))
 
-  (facts "ucb1 reward"
-         (reduce + 0 (map #(:count %) (:arms sim))) => 1000
+(facts "ucb1 reward"
+       (let [sim (last (take 1000 (simulation-seq
+                                    bandit
+                                    mab-ucb1/select-arm
+                                    update-arm
+                                    (initialize-arm-map (count bandit)))))
+             avg-rwd (float (/ (cumulative-reward (:results sim))
+                               (t (:results sim))))]
+         (println (format "Average reward for UCB1 is %2.2f" avg-rwd))
+
+         (reduce + 0 (map (comp arm-count tuple-arm) (:arms sim))) => 1000
          (> avg-rwd 0.80) => truthy))

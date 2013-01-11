@@ -1,85 +1,116 @@
 (ns mab.arm)
 
-(defn create-arm-uuid []
-  (java.util.UUID/randomUUID))
-
 (defn create-arm
   "Create a bandit arm."
-  ([count value uuid meta] {:count count
-                            :value value
-                            :uuid uuid
-                            :meta meta})
-  ([count value]      (create-arm count value (create-arm-uuid) nil))
-  ([count value uuid] (create-arm count value uuid nil))
-  ([]                 (create-arm 0 0 (create-arm-uuid) nil)))
+  ([count value] {:count count
+                  :value value})
+  ([]            (create-arm 0 0)))
 
-(defn initialize-arm-vector
+
+(defn initialize-arm-map
   "Create a vector af initialized arms."
-  ([n] (vec (repeatedly n  #(create-arm 0 0))))
-  ([counts values] (vec (map create-arm counts values)))
-  ([counts values uuids] (vec (map create-arm counts values uuids))))
+  ([n] 
+   (zipmap (range n) (take n (repeatedly create-arm))))
+  ([counts values] 
+   (zipmap (range (count counts)) (map create-arm counts values))))
 
-(defn arm-count [arm]
+(defn arm-count 
+  "Get the count from an arm."
+  [arm]
   (get arm :count 0))
 
-(defn update-count [arm count]
+(defn update-count 
+  "Update the count of an arm."
+  [arm count]
   (assoc arm :count count))
 
-(defn increment-count [arm]
+(defn increment-count 
+  "Increment the count of an arm."
+  [arm]
   (update-in arm [:count] inc))
 
-(defn arm-value [arm]
+(defn arm-value 
+  "Get the value from an arm."
+  [arm]
   (get arm :value 0))
 
-(defn update-value [arm value]
+(defn update-value 
+  "Update the value from an arm."
+  [arm value]
   (assoc arm :value value))
 
-(defn arm-meta [arm]
-  (get arm :meta {}))
 
-(defn arm-uuid [arm]
-  (get arm :uuid))
-
-; really arm-id
-(defn arm-position [arms arm]
-  (.indexOf arms arm))
-
-(defn compute-value [n value reward] 
+(defn compute-update-value 
+  "Compute the updated value for an arm."
+  [current-count current-value reward] 
   (+ 
-    (* (/ (- n 1) n) value) 
-    (* (/ 1 n) reward)))
+    (float (* (/ (- current-count 1) current-count) current-value))
+    (float (* (/ 1 current-count) reward))))
 
-(defn update-arm [arms pos reward]
-  (let [chosen-arm (increment-count (nth arms pos))
-        n (arm-count chosen-arm)
-        value (arm-value chosen-arm)
-        new-value (compute-value n value reward)]
-    (assoc arms pos
-           (update-value chosen-arm new-value))))
 
-(defn max-value 
+(defn arm-by-idx
+  "Get an arm by the index."
+  [arms idx]
+  (arms idx))
+
+(defn replace-arm
+  "Replace the arm at idx in arms with the given arm."
+  [arms idx arm]
+  (assoc arms idx arm))
+
+(defn update-arm 
+  "Update an arm with a reward."
+  [arms idx reward]
+  (let [chosen-arm (arms idx (create-arm 0 0))
+        chosen-arm (increment-count chosen-arm)
+        current-count (arm-count chosen-arm)
+        current-value (arm-value chosen-arm)
+        new-value (compute-update-value current-count current-value reward)]
+    (assoc arms idx (update-value chosen-arm new-value))))
+
+(defn tuple-idx
+  "Given an arm tuple (idx, arm) returns the index."
+  [t]
+  (first t))
+
+(defn tuple-arm
+  "Given an arm tuple (idx, arm) returns the arm."
+  [t]
+  (second t))
+
+(defn max-value-tuple 
+  "Returns a arm tuple for the arm."
   [arms]
-  (apply max-key arm-value arms))
+  (apply max-key (comp arm-value tuple-arm) arms))
 
-(defn max-value-arm-idx 
-  [arms]
-  (let [m (max-value arms)]
-    (arm-position arms m)))
 
 (defn total-arm-counts
+  "Sum the total counts for the arms."
   [arms]
-  (reduce + 0 (map arm-count arms)))
+  (reduce + 0 (map arm-count (vals arms))))
 
 
-(defn remove-by-uuid 
-  "Remove the arm with \"uuid\" from \"arms\"."
-  [arms uuid]
-  ; replace with filterv?
-  (filter #(not (= (arm-uuid %) uuid)) arms))
+(defn random-arm-idx
+  "Get a random arm index."
+  [arms]
+  (nth (keys arms) (rand-int (count arms))))
+
+
+(defn random-arm-tuple
+  "Get a random arm."
+  [arms]
+  (nth (seq arms) (rand-int (count arms))))
+
+
+(defn remove-arm
+  "Remove the arm with \"index\" from \"arms\"."
+  [arms idx]
+  (dissoc arms idx))
 
 
 (defn select-n-arms 
-  "Selects n distinct arms. Good for selecting n distinct arms using a given selection funcition."
+  "Selects n distinct arms. Good for selecting n distinct arms using a given selection funcition. 
+  Returns the n keys of the selected arms."
   [selectfn arms n]
   (loop [a arms
          ret []]
@@ -87,5 +118,11 @@
           :else 
           (let [selected (selectfn a)]
             ; this would be faster using dissoc and a map
-            (recur (remove-by-uuid a (arm-uuid selected)) (conj ret selected))))))
+            (recur (remove-arm a (first selected)) (conj ret (first selected)))))))
 
+
+(defn map-on-arm-vals
+  "map f over the values of m.
+    Example (map-on-arm-vals increment-count arms)"
+  [f m]
+  (into {} (for [[k v] m] [k (f v)])))
