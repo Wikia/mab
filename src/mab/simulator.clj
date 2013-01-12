@@ -186,19 +186,34 @@
 
 
 
-
+; TODO simplify. extract out the reduce fn and just add the row number there
+; instead of at the lower map stage.
 (defn simulation-seq->table
   "Given a simulation seq, extract the columns for analysis from eath simulation. Prepends params
-  onto the extracted columns (see extract-columns)."
+  onto the extracted columns (see extract-columns).
+  
+  Simulations are tabular. See repeatedly-simulate-seq.
+
+  To organize them, we want to add a column heading (e.g. epsilon) and the simulation number so 
+  that results can be averaged over simulations using R. And then finnaly, we want to combine them all 
+  into one table space for easy consumption.
+  
+  "
   [s & [params]]
   (let [rparams (reverse params)
+        ; generate simulation tuples (sim-num, simulation-seq)
         tuples  (partition 2 (interleave (iterate inc 1) s))]
     ; params are reversed so that the are prepended in the order expected
     (mapcat 
       #(map 
          ; prepend the params to the front of each tabular row
-         (fn [col] (reduce (fn [acc e] (conj acc e)) col rparams)) 
+         (fn [rec] 
+           (reduce (fn [acc e] 
+                     (conj acc e)) 
+                   rec rparams)) 
          ; prepend the iteration number
-         (map (fn [r] (conj (extract-columns r) (first %))) 
+         (map (fn [r] 
+                (conj (extract-columns r) (first %))) 
               (second %)))
       tuples)))
+
