@@ -1,5 +1,6 @@
 (ns mab.simulator-test
-  (:use [midje.sweet]
+  (:use [clojure pprint]
+        [midje.sweet]
         [mab arm simulator])
   (:require [mab.algorithms.epsilon-greedy :as eg]))
 
@@ -24,8 +25,20 @@
     (update-cumulative-reward (create-result) 10)) => 10)
 
 
-(let [sim (create-simulation-map (initialize-arm-map 3))]
-  (facts
+(facts "create simulation map"
+  (let [sim (create-simulation-map (initialize-arm-map 3))]
     (extract-columns sim) => truthy
     (count (extract-columns sim)) => 4))
     
+
+(facts "simulation seq to table"
+       (let [sim (repeatedly-simulate-seq bandit 
+                                          (partial eg/select-arm 1.0)
+                                          update-arm 
+                                          (initialize-arm-map (count mean-sample-space))
+                                          2
+                                          2)
+             table (simulation-seq->table sim)]
+         (count table) => 4
+         (filter false? (map number? (mapcat identity table))) => empty?))
+

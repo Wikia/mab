@@ -141,7 +141,7 @@
   (take 1000 
           (simulation-seq bandit 
                           (partial eg/select-arm 0.1) 
-                          eg/update-arm 
+                          update-arm 
                           (initialize-arm-map (count mean-sample-space)))))
   
   "
@@ -178,26 +178,27 @@
     * chosen arm
     * reward at time t
     * cumulative reward at time t
+
+  Returs a seq mainly because we expect to prepend columns later for reporting.
   "
   [r]
-    ((juxt t chosen reward cumulative-reward) (simulation-result r)))
+    (seq ((juxt t chosen reward cumulative-reward) (simulation-result r))))
+
+
 
 
 (defn simulation-seq->table
   "Given a simulation seq, extract the columns for analysis from eath simulation. Prepends params
   onto the extracted columns (see extract-columns)."
-  [s & params]
-  (loop [snum 1
-         srest s
-         ret []]
-    (if (not (empty? srest))
-      (recur
-        (inc snum)
-        (rest srest)
-        (concat ret
-                (map #(concat params 
-                              [snum] 
-                              (extract-columns %)) 
-                     (first srest))))
-      ret)))
-
+  [s & [params]]
+  (let [rparams (reverse params)
+        tuples  (partition 2 (interleave (iterate inc 1) s))]
+    ; params are reversed so that the are prepended in the order expected
+    (mapcat 
+      #(map 
+         ; prepend the params to the front of each tabular row
+         (fn [col] (reduce (fn [acc e] (conj acc e)) col rparams)) 
+         ; prepend the iteration number
+         (map (fn [r] (conj (extract-columns r) (first %))) 
+              (second %)))
+      tuples)))

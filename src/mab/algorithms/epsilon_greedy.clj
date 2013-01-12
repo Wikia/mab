@@ -28,7 +28,7 @@
         bandit (create-bandit sample-space)
         best-arm (best-mean-index sample-space)]
     (println (format "Best arm is %d" best-arm))
-    (map (fn [e]
+    (mapcat (fn [e]
            (simulation-seq->table 
              (repeatedly-simulate-seq bandit 
                                       (partial select-arm e) 
@@ -36,6 +36,6 @@
                                       arms
                                       horizon 
                                       iterations) 
-             e))
+             (list e)))
          epsilons)))
 
