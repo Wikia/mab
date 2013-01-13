@@ -9,41 +9,41 @@
 
 (defn initialize-arm-map
   "Create a vector af initialized arms."
-  ([n] 
+  ([n]
    (zipmap (range n) (take n (repeatedly create-arm))))
-  ([counts values] 
+  ([counts values]
    (zipmap (range (count counts)) (map create-arm counts values))))
 
-(defn arm-count 
+(defn arm-count
   "Get the count from an arm."
   [arm]
   (get arm :count 0))
 
-(defn update-count 
+(defn update-count
   "Update the count of an arm."
   [arm count]
   (assoc arm :count count))
 
-(defn increment-count 
+(defn increment-count
   "Increment the count of an arm."
   [arm]
   (update-in arm [:count] inc))
 
-(defn arm-value 
+(defn arm-value
   "Get the value from an arm."
   [arm]
   (get arm :value 0))
 
-(defn update-value 
+(defn update-value
   "Update the value from an arm."
   [arm value]
   (assoc arm :value value))
 
 
-(defn compute-update-value 
+(defn compute-update-value
   "Compute the updated value for an arm."
-  [current-count current-value reward] 
-  (+ 
+  [current-count current-value reward]
+  (+
     (float (* (/ (- current-count 1) current-count) current-value))
     (float (* (/ 1 current-count) reward))))
 
@@ -58,7 +58,7 @@
   [arms idx arm]
   (assoc arms idx arm))
 
-(defn update-arm 
+(defn update-arm
   "Update an arm with a reward."
   [arms idx reward]
   (let [chosen-arm (arms idx (create-arm 0 0))
@@ -78,7 +78,7 @@
   [t]
   (second t))
 
-(defn max-value-tuple 
+(defn max-value-tuple
   "Returns a arm tuple for the arm."
   [arms]
   (apply max-key (comp arm-value tuple-arm) arms))
@@ -108,14 +108,14 @@
   (dissoc arms idx))
 
 
-(defn select-n-arms 
+(defn select-n-arms
   "Selects n distinct arms. Good for selecting n distinct arms using a given selection funcition. 
   Returns the n keys of the selected arms."
   [selectfn arms n]
   (loop [a arms
          ret []]
     (cond (or (= (count ret) n) (empty? a)) ret
-          :else 
+          :else
           (let [selected (selectfn a)]
             ; this would be faster using dissoc and a map
             (recur (remove-arm a (first selected)) (conj ret (first selected)))))))
