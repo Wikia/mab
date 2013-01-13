@@ -18,21 +18,22 @@
 (facts "update curiosity bonus"
        ; these should all be > 1
        (filter false? (vals 
-                         (map-on-arm-vals #(> (arm-value %) 1) 
+                         (map-on-arm-vals #(> (arm-score %) 1) 
                                           (mab-ucb1/update-curiosity-bonus-all 
                                             (map-on-arm-vals increment-count arms) 4)))) => empty?)
 
 (facts "select arm"
        (let [chosen (mab-ucb1/select-arm (map-on-arm-vals increment-count arms))]
          (tuple-idx chosen) => number?
-         (arm-value (tuple-arm chosen)) => #(> % 0)))
+         (arm-score (tuple-arm chosen)) => #(> % 0)))
 
 (facts "ucb1 reward"
        (let [sim (last (take 1000 (simulation-seq
                                     bandit
                                     mab-ucb1/select-arm
                                     update-arm
-                                    (initialize-arm-map (count bandit)))))
+                                    (initialize-arm-map (count bandit))
+                                    1)))
              avg-rwd (float (/ (cumulative-reward (:results sim))
                                (t (:results sim))))]
          (println (format "Average reward for UCB1 is %2.2f" avg-rwd))

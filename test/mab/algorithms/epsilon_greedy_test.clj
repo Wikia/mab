@@ -13,7 +13,8 @@
                    (simulation-seq bandit 
                                    (partial mab-eg/select-arm 0.1) 
                                    update-arm 
-                                   (initialize-arm-map (count mean-sample-space)))))]
+                                   (initialize-arm-map (count mean-sample-space))
+                                   1)))]
   (fact
     (reduce + 0 (map (comp arm-count tuple-arm) (:arms sim))) => 1000)
 

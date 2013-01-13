@@ -17,10 +17,8 @@
     (let [bonus (Math/sqrt 
                   (/ (* 2 (Math/log total-draws))
                      (float (arm-count arm))))
-          update (+ (float (arm-value arm)) bonus)]
-      ; FIXME: we shouldn't be using the value here. you could easily introduce
-      ; a bug if this function was used to alter data
-      (update-value arm update))
+          score (+ (float (arm-value arm)) bonus)]
+      (update-score arm score))
     arm))
 
 (defn update-curiosity-bonus-all 
@@ -34,7 +32,7 @@
   [arms]
   (if-let [arm (untested-arm arms)]
     arm
-    (max-value-tuple (update-curiosity-bonus-all arms (total-arm-counts arms)))))
+    (max-score-tuple (update-curiosity-bonus-all arms (total-arm-counts arms)))))
 
 
 (defn test-algorithm

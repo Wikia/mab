@@ -36,7 +36,7 @@
 
 (def etest (eg/test-algorithm mean-sample-space 250 1000 [0.1 0.2 0.3 0.4 0.5]))
 ;(write-to-csv "plots/epsilon-greedy.csv" etest)
-(def ucbtest (ucb1/test-algorithm mean-sample-space 250 1))
+(def ucbtest (ucb1/test-algorithm mean-sample-space 250 1000))
 ;(write-to-csv "plots/ucb1.csv" ucbtest)
 (def random (r/test-algorithm mean-sample-space 250 1000))
 

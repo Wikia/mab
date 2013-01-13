@@ -39,6 +39,15 @@
   [arm value]
   (assoc arm :value value))
 
+(defn arm-score 
+  "Get the score from an arm. Scores are ephemeral values associated with an arm."
+  [arm]
+  (get arm :score 0))
+
+(defn update-score 
+  "Update the value from an arm. Scores are ephemeral values associated with an arm."
+  [arm score]
+  (assoc arm :score score))
 
 (defn compute-update-value
   "Compute the updated value for an arm."
@@ -79,10 +88,14 @@
   (second t))
 
 (defn max-value-tuple
-  "Returns a arm tuple for the arm."
+  "Returns a arm tuple for the arm with the maximum value."
   [arms]
   (apply max-key (comp arm-value tuple-arm) arms))
 
+(defn max-score-tuple
+  "Returns a arm tuple for the arm with the maximum score."
+  [arms]
+  (apply max-key (comp arm-score tuple-arm) arms))
 
 (defn total-arm-counts
   "Sum the total counts for the arms."
