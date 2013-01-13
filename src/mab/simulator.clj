@@ -204,8 +204,6 @@
     (reverse cols)))
 
 
-; TODO simplify. extract out the reduce fn and just add the row number there
-; instead of at the lower map stage.
 (defn simulation-seq->table
   "Given a simulation seq, extract the columns for analysis from eath simulation. Prepends params
   onto the extracted columns (see extract-columns).

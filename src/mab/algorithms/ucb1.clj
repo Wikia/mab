@@ -8,14 +8,6 @@
     (filter #(= (arm-count (tuple-arm %)) 0) arms)))
 
 
-    ;ucb_values = [0.0 for arm in range(n_arms)]
-    ;total_counts = sum(self.counts)
-    ;for arm in range(n_arms):
-    ;  bonus = math.sqrt((2 * math.log(total_counts)) / float(self.counts[arm]))
-    ;  ucb_values[arm] = self.values[arm] + bonus
-    ;return ind_max(ucb_values)
-
-
 
 (defn update-curiosity-bonus
   "Update the curiosity bonus for a given arm."
