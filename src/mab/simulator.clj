@@ -185,6 +185,15 @@
     (seq ((juxt t chosen reward cumulative-reward) (simulation-result r))))
 
 
+(defn add-columns
+  "Add cols to s by prepending them onto the front. Maintains the order of cols."
+  [s cols]
+  (reduce
+    (fn [acc e] 
+      (conj acc e)) 
+    (seq s) 
+    (reverse cols)))
+
 
 ; TODO simplify. extract out the reduce fn and just add the row number there
 ; instead of at the lower map stage.
@@ -200,20 +209,17 @@
   
   "
   [s & [params]]
-  (let [rparams (reverse params)
-        ; generate simulation tuples (sim-num, simulation-seq)
-        tuples  (partition 2 (interleave (iterate inc 1) s))]
+  ; generate simulation tuples (sim-num, simulation-seq)
+  (let  [tuples  (partition 2 (interleave (iterate inc 1) s))]
     ; params are reversed so that the are prepended in the order expected
     (mapcat 
-      #(map 
+      (fn [t] 
+        (map 
          ; prepend the params to the front of each tabular row
-         (fn [rec] 
-           (reduce (fn [acc e] 
-                     (conj acc e)) 
-                   rec rparams)) 
+         #(add-columns % params)
          ; prepend the iteration number
          (map (fn [r] 
-                (conj (extract-columns r) (first %))) 
-              (second %)))
+                (conj (extract-columns r) (first t))) 
+              (second t))))
       tuples)))
 

@@ -39,6 +39,10 @@
                                           2
                                           2)
              table (simulation-seq->table sim)]
+         (pprint table)
          (count table) => 4
          (filter false? (map number? (mapcat identity table))) => empty?))
 
+(facts "test add columns"
+       (add-columns '(c d e) '(a b)) => '(a b c d e)
+       (add-columns '(c d e) nil) => '(c d e))
