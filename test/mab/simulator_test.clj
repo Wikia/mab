@@ -18,17 +18,18 @@
   (best-mean-index [0 2 5 1 3]) => 2)
 
 (fact
-  (t (inc-t (create-result))) => 1)
+  (t (inc-t (create-result 1))) => 1)
 
 (fact 
   (cumulative-reward
-    (update-cumulative-reward (create-result) 10)) => 10)
+    (update-cumulative-reward (create-result 1) 10)) => 10)
 
 
 (facts "create simulation map"
-  (let [sim (create-simulation-map (initialize-arm-map 3))]
+  (let [sim (create-simulation-map (initialize-arm-map 3) 1)]
+    (sim-num sim) => 1
     (extract-columns sim) => truthy
-    (count (extract-columns sim)) => 4))
+    (count (extract-columns sim)) => 5))
     
 
 (facts "simulation seq to table"
@@ -39,10 +40,19 @@
                                           2
                                           2)
              table (simulation-seq->table sim)]
-         (pprint table)
          (count table) => 4
+         (first (first table)) => 1
+         (second (first table)) => 1
+         (first (second table)) => 1
+         (second (second table)) => 2
+
+         (first (nth table 2)) => 2
+         (second (nth table 2)) => 1
+         (first (nth table 3)) => 2
+         (second (nth table 3)) => 2
          (filter false? (map number? (mapcat identity table))) => empty?))
 
 (facts "test add columns"
        (add-columns '(c d e) '(a b)) => '(a b c d e)
        (add-columns '(c d e) nil) => '(c d e))
+

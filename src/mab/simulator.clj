@@ -34,17 +34,18 @@
 
 (defn create-result 
   "Create a result. :t and :cumulative-reward are initialzed to 0."
-  []
+  [sim-num]
   {:t 0 
+   :sim-num sim-num
    :chosen nil 
    :reward 0
    :cumulative-reward 0})
 
 
 (defn create-simulation-map 
-  [arms]
+  [arms sim-num]
   {:arms arms 
-   :results (create-result)})
+   :results (create-result sim-num)})
 
 
 (defn simulation-arms 
@@ -56,11 +57,16 @@
   [m]
   (get m :results))
 
-
 (defn t 
   "Get t from a result."
   [r]
   (get r :t 0))
+
+
+(defn sim-num
+  "Get the simulation number."
+  [r]
+  (get r :sim-num 1))
 
 
 (defn cumulative-reward 
@@ -113,7 +119,7 @@
   select: should be of the form (select arms)
   update: of the form (update arms pos reward)
   hashmap: {:arms seq of arms created with mab.arms/create-arm
-            :results initialized with (create-result)}
+            :results initialized with (create-result sim-num)}
   
   "
   [bandit select update {:keys [arms results]}] 
@@ -142,12 +148,13 @@
           (simulation-seq bandit 
                           (partial eg/select-arm 0.1) 
                           update-arm 
-                          (initialize-arm-map (count mean-sample-space)))))
+                          (initialize-arm-map (count mean-sample-space)
+                          sim-num))))
   
   "
-  [bandit select update arms]
+  [bandit select update arms sim-num]
   (drop 1 (iterate (partial simulate bandit select update)
-                   (create-simulation-map arms))))
+                   (create-simulation-map arms sim-num))))
 
 
 (defn repeatedly-simulate-seq
@@ -166,9 +173,11 @@
 
   "
   [bandit select update arms horizon iterations]
-  (repeatedly iterations
-              #(take horizon
-                    (simulation-seq bandit select update arms))))
+  (map
+    (fn [sim-num]
+      (take horizon
+            (simulation-seq bandit select update arms sim-num)))
+    (range 1 (inc iterations))))
 
 
 
@@ -182,7 +191,7 @@
   Returs a seq mainly because we expect to prepend columns later for reporting.
   "
   [r]
-    (seq ((juxt t chosen reward cumulative-reward) (simulation-result r))))
+    (seq ((juxt sim-num t chosen reward cumulative-reward) (simulation-result r))))
 
 
 (defn add-columns
@@ -209,17 +218,8 @@
   
   "
   [s & [params]]
-  ; generate simulation tuples (sim-num, simulation-seq)
-  (let  [tuples  (partition 2 (interleave (iterate inc 1) s))]
-    ; params are reversed so that the are prepended in the order expected
-    (mapcat 
-      (fn [t] 
-        (map 
-         ; prepend the params to the front of each tabular row
-         #(add-columns % params)
-         ; prepend the iteration number
-         (map (fn [r] 
-                (conj (extract-columns r) (first t))) 
-              (second t))))
-      tuples)))
+  (mapcat 
+    (fn [t] ; pull out the columns and add params to the front
+        (map #(add-columns (extract-columns %) params) t))
+      s))
 

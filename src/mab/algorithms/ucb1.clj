@@ -7,14 +7,27 @@
   (first 
     (filter #(= (arm-count (tuple-arm %)) 0) arms)))
 
+
+    ;ucb_values = [0.0 for arm in range(n_arms)]
+    ;total_counts = sum(self.counts)
+    ;for arm in range(n_arms):
+    ;  bonus = math.sqrt((2 * math.log(total_counts)) / float(self.counts[arm]))
+    ;  ucb_values[arm] = self.values[arm] + bonus
+    ;return ind_max(ucb_values)
+
+
+
 (defn update-curiosity-bonus
   "Update the curiosity bonus for a given arm."
   [arm total-draws]
   (if (and (> (arm-count arm) 0)
            (> total-draws 0))
-    (let [bonus (/ (Math/sqrt (* 2 (Math/log total-draws)))
-                   (float (arm-count arm)))
+    (let [bonus (Math/sqrt 
+                  (/ (* 2 (Math/log total-draws))
+                     (float (arm-count arm))))
           update (+ (float (arm-value arm)) bonus)]
+      ; FIXME: we shouldn't be using the value here. you could easily introduce
+      ; a bug if this function was used to alter data
       (update-value arm update))
     arm))
 

@@ -17,7 +17,7 @@ ggplot(stats, aes(x = T, y = V1)) +
 ggsave("plots/ucb1_average_reward.png")
 
 # Plot frequency of selecting correct arm as a function of time.
-# In this instance, 0 is the correct arm.
+# In this instance, 1 is the correct arm.
 stats <- ddply(results,
                c("T"),
                function (df) {mean(df$ChosenArm == 1)})
