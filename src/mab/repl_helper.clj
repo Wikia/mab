@@ -43,9 +43,9 @@
 (def real-sample-space [0.0016 0.0024 0.0016 0.0011 0.001 0.0008 0.0008 0.0008])
 
 ;(def etest (eg/test-algorithm real-sample-space 10000 100 [0.1 0.2 0.3 0.4 0.5]))
-(def etest-real (eg/test-algorithm real-sample-space 100000 3 [0.1 0.2]))
+(def etest-real (eg/test-algorithm real-sample-space 50000 100 [0.1 0.2]))
 ;(def ef (future (write-to-csv "plots/epsilon-greedy.csv" (apply concat etest-real))))
-(def ucbtest-real (ucb1/test-algorithm real-sample-space 1000000 2))
+(def ucbtest-real (ucb1/test-algorithm real-sample-space 50000 100))
 ;(def uf (future (write-to-csv "plots/ucb1.csv" ucbtest-real)))
 (def rtest-real (r/test-algorithm real-sample-space 10000 100))
 ;(def rf (future (write-to-csv "plots/random.csv" rtest-real)))
