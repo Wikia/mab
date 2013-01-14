@@ -41,6 +41,7 @@
 
 (defn inc-value
   "Increment the value of an arm"
+  [arm]
   (update-in arm [:value] (fnil inc 0)))
 
 (defn arm-score 
