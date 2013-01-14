@@ -24,7 +24,7 @@
        (arm-count 
          (update-count test-arm 2)) => 2
        (arm-count 
-         (increment-count test-arm)) => 2)
+         (inc-count test-arm)) => 2)
 
 (facts "replace arm"
        (let [idx 0
@@ -79,4 +79,4 @@
 
 (facts "map on arm values"
        (total-arm-counts arms) => 0
-       (total-arm-counts (map-on-arm-vals increment-count arms)) => (count arms))
+       (total-arm-counts (map-on-arm-vals inc-count arms)) => (count arms))

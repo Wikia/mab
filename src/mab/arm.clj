@@ -24,7 +24,7 @@
   [arm count]
   (assoc arm :count count))
 
-(defn increment-count
+(defn inc-count
   "Increment the count of an arm."
   [arm]
   (update-in arm [:count] inc))
@@ -71,7 +71,7 @@
   "Update an arm with a reward."
   [arms idx reward]
   (let [chosen-arm (arms idx (create-arm 0 0))
-        chosen-arm (increment-count chosen-arm)
+        chosen-arm (inc-count chosen-arm)
         current-count (arm-count chosen-arm)
         current-value (arm-value chosen-arm)
         new-value (compute-update-value current-count current-value reward)]
@@ -136,6 +136,6 @@
 
 (defn map-on-arm-vals
   "map f over the values of m.
-    Example (map-on-arm-vals increment-count arms)"
+    Example (map-on-arm-vals inc-count arms)"
   [f m]
   (into {} (for [[k v] m] [k (f v)])))

@@ -13,17 +13,17 @@
 (facts "untested arm"
   (mab-ucb1/untested-arm arms) => truthy
   (arm-count (mab-ucb1/untested-arm arms)) => 0
-  (mab-ucb1/untested-arm (map-on-arm-vals increment-count arms)) => falsey)
+  (mab-ucb1/untested-arm (map-on-arm-vals inc-count arms)) => falsey)
 
 (facts "update curiosity bonus"
        ; these should all be > 1
        (filter false? (vals 
                          (map-on-arm-vals #(> (arm-score %) 1) 
                                           (mab-ucb1/update-curiosity-bonus-all 
-                                            (map-on-arm-vals increment-count arms) 4)))) => empty?)
+                                            (map-on-arm-vals inc-count arms) 4)))) => empty?)
 
 (facts "select arm"
-       (let [chosen (mab-ucb1/select-arm (map-on-arm-vals increment-count arms))]
+       (let [chosen (mab-ucb1/select-arm (map-on-arm-vals inc-count arms))]
          (tuple-idx chosen) => number?
          (arm-score (tuple-arm chosen)) => #(> % 0)))
 
