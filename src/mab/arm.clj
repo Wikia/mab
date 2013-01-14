@@ -27,7 +27,7 @@
 (defn inc-count
   "Increment the count of an arm."
   [arm]
-  (update-in arm [:count] inc))
+  (update-in arm [:count] (fnil inc 0)))
 
 (defn arm-value
   "Get the value from an arm."
@@ -38,6 +38,10 @@
   "Update the value from an arm."
   [arm value]
   (assoc arm :value value))
+
+(defn inc-value
+  "Increment the value of an arm"
+  (update-in arm [:value] (fnil inc 0)))
 
 (defn arm-score 
   "Get the score from an arm. Scores are ephemeral values associated with an arm."
