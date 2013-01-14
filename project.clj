@@ -8,6 +8,7 @@
   :profiles {:dev {:plugins [[lein-midje "2.0.3"]]
                    :dependencies [[lein-midje-lazytest "0.1.0"] 
                                   [lazytest "1.2.3"]]}}
+  :plugins [[codox "0.6.4"]]
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [midje "1.4.0"]
                  [org.clojure/data.csv "0.1.2"]])
