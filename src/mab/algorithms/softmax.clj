@@ -25,23 +25,17 @@
   "Generate a seq of tuples with (cumulative proportional probability, arm tuple). This will facilitate
   the use of seq abstractions in finding the arm that pushes the cumulative probability above a limit.
 
-  [(float arm) (float arm) ...]
+  [[float arm] [float arm] ...]
   
   "
-  [temperature arms]
-  (let [sum (sum-arm-prob temperature arms)
-        arm-seq (seq arms)
-        first-arm (first arm-seq)]
-    (reduce 
-      (fn [acc a]
-        (conj acc
-              ; add the proportional prob of the last arm to the proportional
-              ; prob of this arm
-              (list (+ (first (last acc)) 
-                       (arm->proportional-prob temperature (tuple-arm a) sum))
-                    a))) 
-      [(list (arm->proportional-prob temperature (tuple-arm first-arm) sum) first-arm)] 
-      (rest arm-seq))))
+  ([temp arms sum prev-p]
+   (when (not (empty? arms))
+     (let [arm (first arms)
+           p (+ prev-p (softmax/arm->proportional-prob temp (tuple-arm arm) sum))]
+       (cons [p arm]
+             (lazy-seq (proportional-probability-seq temp (rest arms) sum p))))))
+  ([temp arms]
+   (proportional-probability-seq temp arms (softmax/sum-arm-prob temp arms) 0)))
 
 
 (defn select-arm
