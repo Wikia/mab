@@ -23,4 +23,5 @@
                                update-arm
                                arms
                                horizon 
-                               iterations))))
+                               iterations)
+      (list "random"))))

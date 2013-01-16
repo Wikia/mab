@@ -49,4 +49,5 @@
                                update-arm
                                arms
                                horizon
-                               iterations))))
+                               iterations)
+      (list "ucb1"))))
