@@ -36,6 +36,6 @@
                                       arms
                                       horizon 
                                       iterations) 
-             (list e)))
+             (list (format "eg %2.2f" e))))
          epsilons)))
 

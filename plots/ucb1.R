@@ -2,7 +2,7 @@ library("plyr")
 library("ggplot2")
 
 results <- read.csv("plots/ucb1.csv", header = FALSE)
-names(results) <- c("Sim", "T", "ChosenArm", "Reward", "CumulativeReward")
+names(results) <- c("Algo", "Sim", "T", "ChosenArm", "Reward", "CumulativeReward")
 
 # Plot average reward as a function of time.
 stats <- ddply(results,
