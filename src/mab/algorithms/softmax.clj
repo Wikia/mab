@@ -29,7 +29,7 @@
   
   "
   ([temp arms sum prev-p]
-   (when (not (empty? arms))
+   (when (seq arms)
      (let [arm (first arms)
            p (+ prev-p (softmax/arm->proportional-prob temp (tuple-arm arm) sum))]
        (cons [p arm]
