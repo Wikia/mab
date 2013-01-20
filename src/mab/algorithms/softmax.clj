@@ -31,11 +31,11 @@
   ([temp arms sum prev-p]
    (when (seq arms)
      (let [arm (first arms)
-           p (+ prev-p (softmax/arm->proportional-prob temp (tuple-arm arm) sum))]
+           p (+ prev-p (arm->proportional-prob temp (tuple-arm arm) sum))]
        (cons [p arm]
              (lazy-seq (proportional-probability-seq temp (rest arms) sum p))))))
   ([temp arms]
-   (proportional-probability-seq temp arms (softmax/sum-arm-prob temp arms) 0)))
+   (proportional-probability-seq temp arms (sum-arm-prob temp arms) 0)))
 
 
 (defn select-arm
