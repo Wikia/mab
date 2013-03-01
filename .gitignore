@@ -14,4 +14,6 @@ plots/*.png
 plots/*.pdf
 plots/*.jpeg
 .Rhistory
+.Rdata
+Rplots.pdf
 .lein-repl-history
