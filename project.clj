@@ -10,5 +10,7 @@
                                   [lazytest "1.2.3"]]}}
   :plugins [[codox "0.6.4"]]
   :dependencies [[org.clojure/clojure "1.4.0"]
-                 [midje "1.4.0"]
-                 [org.clojure/data.csv "0.1.2"]])
+                 [org.clojure/data.csv "0.1.2"]
+                 [org.clojure/tools.cli "0.2.2"]
+                 [environ "0.2.1"]
+                 [midje "1.4.0"]])

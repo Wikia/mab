@@ -220,3 +220,16 @@
         (map #(add-columns (extract-columns %) params) t))
       s))
 
+
+(defn reward-rate-simulation 
+  "Simulate (count sample-space) arms. Only compute the final reward rate."
+  [sample-space selector horizon iterations]
+  (let [psim (repeatedly-simulate-seq (create-bandit sample-space) 
+                                      selector
+                                      update-arm 
+                                      (initialize-arm-map (count sample-space)) 
+                                      horizon
+                                      iterations)]
+    (map #(/ (cumulative-reward (simulation-result (last %))) 
+             (float (t (simulation-result (last %))))) 
+         psim)))
