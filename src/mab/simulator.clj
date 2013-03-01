@@ -1,7 +1,6 @@
 (ns mab.simulator
   (:use [mab arm]))
 
-
 (defn create-bernoulli-arm 
   "Creates a Bernoulli arm that will reward 1 with probability p."
   [p]
