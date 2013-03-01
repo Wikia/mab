@@ -30,8 +30,8 @@
 
 (def random-sample-space [0.000344791713109516 0.000461934276692784 0.000751259212885234 0.000591344199282995 0.000375297465889156 0.000724431818181818 0.00075399293535024])
 
-(def horizon 3000000)
-(def iterations 2)
+(def horizon 100000)
+(def iterations 100)
 
 (defn n-draw-random-selector 
   "Wrapper for simulating the algorithmic selection of three arms and final selection of one at random."

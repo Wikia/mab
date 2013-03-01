@@ -220,9 +220,20 @@
         (map #(add-columns (extract-columns %) params) t))
       s))
 
+(defn arm-reward-rate
+  [arm]
+  (if (> (arm-count arm) 0)
+    (/ (arm-value arm) 
+       (float (arm-count arm)))
+    0))
+
+(defn avg [nums]
+  (/ (reduce + 0 nums)
+     (float (count nums))))
 
 (defn reward-rate-simulation 
-  "Simulate (count sample-space) arms. Only compute the final reward rate."
+  "Simulate (count sample-space) arms and compute the final reward rate for each arm. 
+  The final value in each arm position is the average reward rate of each arm over the iterations."
   [sample-space selector horizon iterations]
   (let [psim (repeatedly-simulate-seq (create-bandit sample-space) 
                                       selector
@@ -230,6 +241,11 @@
                                       (initialize-arm-map (count sample-space)) 
                                       horizon
                                       iterations)]
-    (map #(/ (cumulative-reward (simulation-result (last %))) 
-             (float (t (simulation-result (last %))))) 
-         psim)))
+    (map avg
+         ;; organize column-wise by arm row-wise by iteration organize column-wise by arm row-wise by iteration
+         (apply map vector 
+                ; compute the arm
+                (map #(map (comp arm-reward-rate tuple-arm) %)
+                     ; take the arms from the last simulation and convert to a seq
+                     (map (comp seq simulation-arms last) psim))))))
+
