@@ -13,7 +13,9 @@
 
 
 (defn create-bandit 
-  "Given a seq of reward probabilities, create a Bernoulli arm for each."
+  "Given a seq of reward probabilities, create a Bernoulli arm for each. 
+  Each Bernoulli arm is mapped to it's corresponding reward mean index 
+  in the sample space."
   [means]
   (zipmap (range (count means)) 
           (map create-bernoulli-arm means)))
