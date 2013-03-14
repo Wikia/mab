@@ -1,7 +1,6 @@
 (ns mab.simulator
   (:use [mab arm]))
 
-
 (defn create-bernoulli-arm 
   "Creates a Bernoulli arm that will reward 1 with probability p."
   [p]
@@ -14,7 +13,9 @@
 
 
 (defn create-bandit 
-  "Given a seq of reward probabilities, create a Bernoulli arm for each."
+  "Given a seq of reward probabilities, create a Bernoulli arm for each. 
+  Each Bernoulli arm is mapped to it's corresponding reward mean index 
+  in the sample space."
   [means]
   (zipmap (range (count means)) 
           (map create-bernoulli-arm means)))
@@ -220,4 +221,33 @@
     (fn [t] ; pull out the columns and add params to the front
         (map #(add-columns (extract-columns %) params) t))
       s))
+
+(defn arm-reward-rate
+  [arm]
+  (if (> (arm-count arm) 0)
+    (/ (arm-value arm) 
+       (float (arm-count arm)))
+    0))
+
+(defn avg [nums]
+  (/ (reduce + 0 nums)
+     (float (count nums))))
+
+(defn reward-rate-simulation 
+  "Simulate (count sample-space) arms and compute the final reward rate for each arm. 
+  The final value in each arm position is the average reward rate of each arm over the iterations."
+  [sample-space selector horizon iterations]
+  (let [psim (repeatedly-simulate-seq (create-bandit sample-space) 
+                                      selector
+                                      update-arm 
+                                      (initialize-arm-map (count sample-space)) 
+                                      horizon
+                                      iterations)]
+    (map avg
+         ;; organize column-wise by arm row-wise by iteration organize column-wise by arm row-wise by iteration
+         (apply map vector 
+                ; compute the arm
+                (map #(map (comp arm-reward-rate tuple-arm) %)
+                     ; take the arms from the last simulation and convert to a seq
+                     (map (comp seq simulation-arms last) psim))))))
 
