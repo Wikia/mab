@@ -11,3 +11,9 @@
     (csv/write-csv out-file data))))
   
 
+(defn eq-key
+  "Similar to max-key but tests that all of the (f x) are equal."
+  ([f x] x)
+  ([f x y] (if (= (f x) (f y)) x false))
+  ([f x y & more]
+   (reduce #(eq-key f %1 %2) (eq-key f x y) more)))

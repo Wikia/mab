@@ -1,4 +1,5 @@
-(ns mab.arm)
+(ns mab.arm
+  (:require [mab.util :refer [eq-key]]))
 
 (defn create-arm
   "Create a bandit arm."
@@ -144,3 +145,16 @@
     Example (map-on-arm-vals inc-count arms)"
   [f m]
   (into {} (for [[k v] m] [k (f v)])))
+
+
+(defn best-value-rate-arm
+  "Find the arm with the higest value / count ratio."
+  [arms]
+  (apply max-key (fn [a]
+                   (let [ap (tuple-arm a)]
+                     (if (> (arm-count ap) 0)
+                       (/ (arm-value ap)
+                          (arm-count ap))
+                       0)))
+         arms))
+

@@ -6,7 +6,8 @@
             [mab.algorithms.softmax :as softmax]
             [mab.algorithms.random :as r]
             [clojure.data.csv :as csv]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [midje.repl :refer :all]))
 
 
 ; data file format

@@ -19,6 +19,11 @@
   (zipmap (range (count means)) 
           (map create-bernoulli-arm means)))
 
+(defn create-keyed-bandit 
+  "Given a seq of reward probabilities, create a Bernoulli arm for each under the corresponding keys."
+  [means keys]
+  (zipmap keys
+          (map create-bernoulli-arm means)))
 
 (defn best-mean-index 
   "Find the \"best\" arm or the arm with the highest p. For use with seq of means."
