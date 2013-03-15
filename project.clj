@@ -1,4 +1,4 @@
-(defproject com.huddler/mab "0.2.1-SNAPSHOT"
+(defproject com.huddler/mab "0.2.2-alpha1"
   :description "Multi-armed bandit algorithms and testing."
   :url "http://www.huddler.com"
   :license {:name "Eclipse Public License"
