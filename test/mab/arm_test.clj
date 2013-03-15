@@ -1,7 +1,7 @@
 (ns mab.arm-test
   (:use [midje.sweet]
         [clojure pprint]
-        [mab arm]))
+        [mab arm util]))
 
 (def test-arm (create-arm 1 2))
 
@@ -79,4 +79,4 @@
 
 (facts "map on arm values"
        (total-arm-counts arms) => 0
-       (total-arm-counts (map-on-arm-vals inc-count arms)) => (count arms))
+       (total-arm-counts (map-on-map-vals inc-count arms)) => (count arms))

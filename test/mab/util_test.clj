@@ -23,3 +23,13 @@
        (apply (partial eq-key inc) (take 10000 (cycle [1]))) => truthy
        (apply (partial eq-key dec) (take 10000 (cycle [1]))) => truthy)
 
+(facts :avg
+       (avg [1 2 3 4 5]) => 3.0
+       (avg [1 1 1]) => 1.0
+       (avg (take 100 (cycle [1 2]))) => 1.5)
+
+
+(facts :map-on-map-vals
+       (let [m (zipmap [1 2 3] [1 2 3])]
+         (get (map-on-map-vals inc m) 3) => 4))
+

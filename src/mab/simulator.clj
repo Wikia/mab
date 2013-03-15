@@ -1,5 +1,5 @@
 (ns mab.simulator
-  (:use [mab arm]))
+  (:use [mab arm util]))
 
 (defn create-bernoulli-arm 
   "Creates a Bernoulli arm that will reward 1 with probability p."
@@ -227,16 +227,7 @@
         (map #(add-columns (extract-columns %) params) t))
       s))
 
-(defn arm-reward-rate
-  [arm]
-  (if (> (arm-count arm) 0)
-    (/ (arm-value arm) 
-       (float (arm-count arm)))
-    0))
 
-(defn avg [nums]
-  (/ (reduce + 0 nums)
-     (float (count nums))))
 
 (defn reward-rate-simulation 
   "Simulate (count sample-space) arms and compute the final reward rate for each arm. 
@@ -255,4 +246,34 @@
                 (map #(map (comp arm-reward-rate tuple-arm) %)
                      ; take the arms from the last simulation and convert to a seq
                      (map (comp seq simulation-arms last) psim))))))
+
+
+(defn simulate-best-arm-selection
+  [selector n horizon iterations]
+  (let [means (take n (repeatedly rand))
+        best-mean (apply max means)
+        best-mean-idx (.indexOf means best-mean)
+        arms (initialize-arm-map n)
+        bandit (create-keyed-bandit means (-> arms keys sort))
+        best-bandit-index (first (apply max-key val
+                                   (map-on-map-vals #(-> % meta (get :probability)) bandit)))
+        psim (repeatedly-simulate-seq bandit
+                                      selector
+                                      update-arm 
+                                      arms
+                                      horizon
+                                      iterations)]
+
+    ; make sure the best mean index lines up lines up with the index of the
+    ; best bandit
+    (assert (= best-mean-idx best-bandit-index))
+    (assert (= best-mean (->
+                           (apply max-key #(-> % second meta (get :probability)) bandit)
+                           second meta (get :probability))))
+
+    (frequencies (map #(= best-mean-idx (first %))
+         (map #(apply max-key val (map-on-map-vals arm-value %))
+              (map (comp simulation-arms last) psim))))))
+
+
 

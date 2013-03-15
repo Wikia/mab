@@ -1,5 +1,5 @@
 (ns mab.arm
-  (:require [mab.util :refer [eq-key]]))
+  (:require [mab.util :refer [eq-key map-on-map-vals]]))
 
 (defn create-arm
   "Create a bandit arm."
@@ -54,6 +54,16 @@
   "Update the value from an arm. Scores are ephemeral values associated with an arm."
   [arm score]
   (assoc arm :score score))
+
+
+(defn arm-reward-rate
+  "Comute an arm's reward rate."
+  [arm]
+  (if (> (arm-count arm) 0)
+    (/ (arm-value arm) 
+       (float (arm-count arm)))
+    0))
+
 
 (defn compute-update-value
   "Compute the updated value for an arm."
@@ -140,11 +150,6 @@
             (recur (remove-arm a (first selected)) (conj ret (first selected)))))))
 
 
-(defn map-on-arm-vals
-  "map f over the values of m.
-    Example (map-on-arm-vals inc-count arms)"
-  [f m]
-  (into {} (for [[k v] m] [k (f v)])))
 
 
 (defn best-value-rate-arm

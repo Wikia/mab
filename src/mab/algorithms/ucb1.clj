@@ -1,5 +1,5 @@
 (ns mab.algorithms.ucb1
-  (:use [mab simulator arm]))
+  (:use [mab simulator arm util]))
 
 (defn untested-arm
   "Find any untested arms. An untest arm has a count of 0."
@@ -24,7 +24,7 @@
 (defn update-curiosity-bonus-all 
   "Update the curiosity bonus for all of the arms."
   [arms total-draws]
-  (map-on-arm-vals #(update-curiosity-bonus % total-draws) arms))
+  (map-on-map-vals #(update-curiosity-bonus % total-draws) arms))
 
 
 (defn select-arm 
