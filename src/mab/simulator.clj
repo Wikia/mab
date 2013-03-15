@@ -169,7 +169,7 @@
 
   (repeatedly-simulate-seq bandit 
                   (partial eg/select-arm 0.1) 
-                  eg/update-arm 
+                  update-arm 
                   (initialize-arm-map (count mean-sample-space))
                   250 1000)
 
@@ -248,9 +248,10 @@
                      (map (comp seq simulation-arms last) psim))))))
 
 
+
 (defn simulate-best-arm-selection
-  [selector n horizon iterations]
-  (let [means (take n (repeatedly rand))
+  [selector n horizon iterations &{:keys [mean-upper-bound] :or {mean-upper-bound 1}}]
+  (let [means (take n (repeatedly #(rand mean-upper-bound)))
         best-mean (apply max means)
         best-mean-idx (.indexOf means best-mean)
         arms (initialize-arm-map n)

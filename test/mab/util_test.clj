@@ -33,3 +33,11 @@
        (let [m (zipmap [1 2 3] [1 2 3])]
          (get (map-on-map-vals inc m) 3) => 4))
 
+(facts :frequencies->probability
+       (let [p (frequencies->probability (frequencies (take 1000 (cycle [:a :b]))))]
+         (:a p) => 0.5
+         (:b p) => 0.5)
+       
+       (:a (frequencies->probability (frequencies (take 100 (cycle [:a]))))) => 1.0)
+       
+
