@@ -1,6 +1,7 @@
 (ns mab.repl-helper
   (:use [clojure pprint]
-        [mab arm simulator util])
+        [mab arm simulator util]
+        [clojure.tools.namespace.repl :only (refresh)])
   (:require [mab.algorithms.epsilon-greedy :as eg]
             [mab.algorithms.ucb1 :as ucb1]
             [mab.algorithms.softmax :as softmax]

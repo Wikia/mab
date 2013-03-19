@@ -25,4 +25,6 @@
 
 
 (facts :accuracy :slow
-       (get (frequencies->probability (simulate-best-arm-selection (partial mab-eg/select-arm 0.15) 5 8000 100)) true) => 1.0)
+       (get (frequencies->probability 
+              (simulate-best-arm-selection 
+                (partial mab-eg/select-arm 0.10) 5 6000 100)) true) => 1.0)

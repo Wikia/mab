@@ -42,4 +42,5 @@
          (> avg-rwd 0.80) => truthy))
 
 (facts :accuracy :slow
-       (get (frequencies->probability (simulate-best-arm-selection mab-ucb1/select-arm 5 8000 100)) true) => 1.0)
+       (get (frequencies->probability 
+              (simulate-best-arm-selection mab-ucb1/select-arm 5 8000 100)) true) => 1.0)

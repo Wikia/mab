@@ -5,9 +5,13 @@
 (defn select-arm 
   "Select an arm using the given epsilon for exploration."
   [epsilon arms]
-  (if (> (rand 1) epsilon)
-    (max-value-tuple arms)
-    (random-arm-tuple arms)))
+  ; if all the arms have the same expected value, pick one at random. this will
+  ; help prevent the overselection of the last arm
+  (if (all-arm-values-equal? arms)
+    (random-arm-tuple arms)
+    (if (> (rand 1) epsilon)
+      (max-value-tuple arms)
+      (random-arm-tuple arms))))
 
 
 (defn test-algorithm

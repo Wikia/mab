@@ -1,5 +1,5 @@
 (ns mab.arm
-  (:require [mab.util :refer [eq-key map-on-map-vals]]))
+  (:use [mab.util :only (all-equal?)]))
 
 (defn create-arm
   "Create a bandit arm."
@@ -27,8 +27,10 @@
 
 (defn inc-count
   "Increment the count of an arm."
-  [arm]
-  (update-in arm [:count] (fnil inc 0)))
+  ([arm step]
+   (update-in arm [:count] (fnil (partial + step) 0)))
+  ([arm]
+   (inc-count arm 1)))
 
 (defn arm-value
   "Get the value from an arm."
@@ -67,10 +69,12 @@
 
 (defn compute-update-value
   "Compute the updated value for an arm."
-  [current-count current-value reward]
-  (+
-    (float (* (/ (- current-count 1) current-count) current-value))
-    (float (* (/ 1 current-count) reward))))
+  ([current-count current-value reward inc-by]
+   (+
+     (float (* (/ (- current-count inc-by) current-count) current-value))
+     (float (* (/ 1 current-count) reward))))
+  ([current-count current-value reward]
+   (compute-update-value current-count current-value reward 1)))
 
 
 (defn arm-by-idx
@@ -85,13 +89,15 @@
 
 (defn update-arm
   "Update an arm with a reward."
-  [arms idx reward]
-  (let [chosen-arm (arms idx (create-arm 0 0))
-        chosen-arm (inc-count chosen-arm)
-        current-count (arm-count chosen-arm)
-        current-value (arm-value chosen-arm)
-        new-value (compute-update-value current-count current-value reward)]
-    (assoc arms idx (update-value chosen-arm new-value))))
+  ([arms idx reward inc-by]
+   (let [chosen-arm (arms idx (create-arm 0 0))
+         chosen-arm (inc-count chosen-arm inc-by)
+         current-count (arm-count chosen-arm)
+         current-value (arm-value chosen-arm)
+         new-value (compute-update-value current-count current-value reward inc-by)]
+     (assoc arms idx (update-value chosen-arm new-value))))
+  ([arms idx reward]
+   (update-arm arms idx reward 1)))
 
 (defn tuple-idx
   "Given an arm tuple (idx, arm) returns the index."
@@ -150,8 +156,6 @@
             (recur (remove-arm a (first selected)) (conj ret (first selected)))))))
 
 
-
-
 (defn best-value-rate-arm
   "Find the arm with the higest value / count ratio."
   [arms]
@@ -162,4 +166,9 @@
                           (arm-count ap))
                        0)))
          arms))
+
+(defn all-arm-values-equal?
+  "Test if all of the arm-value componets of arms are equal."
+  [arms]
+  (all-equal? (map (comp arm-value second) arms)))
 

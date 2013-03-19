@@ -39,3 +39,8 @@
   (let [total (reduce + (map val fmap))]
     (map-on-map-vals #(float (/ % total)) fmap)))
 
+
+(defn all-equal?
+  "Test if all of the elements of col are equal (using =)."
+  [col]
+  (apply = col))

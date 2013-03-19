@@ -23,6 +23,11 @@
        (apply (partial eq-key inc) (take 10000 (cycle [1]))) => truthy
        (apply (partial eq-key dec) (take 10000 (cycle [1]))) => truthy)
 
+
+(facts :all-equal
+       (all-equal? (take 10 (cycle [0]))) => true
+       (all-equal? (take 10 (cycle [0 1]))) => false)
+
 (facts :avg
        (avg [1 2 3 4 5]) => 3.0
        (avg [1 1 1]) => 1.0
