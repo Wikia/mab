@@ -272,9 +272,9 @@
                            (apply max-key #(-> % second meta (get :probability)) bandit)
                            second meta (get :probability))))
 
-    (frequencies (map #(= best-mean-idx (first %))
-         (map #(apply max-key val (map-on-map-vals arm-value %))
-              (map (comp simulation-arms last) psim))))))
-
-
+    (frequencies 
+      (->> psim
+        (map (comp simulation-arms last))
+        (map #(apply max-key (comp arm-value second) %))
+        (map #(= best-mean-idx (first %)))))))
 
