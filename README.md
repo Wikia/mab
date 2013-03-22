@@ -4,7 +4,9 @@ A Clojure library for multi-armed bandit optimization and simulation.
 
 ## Usage
 
-TBD
+## Release To Huddler Jar Repo
+
+    ./scripts/deploy.sh
 
 ## License
 

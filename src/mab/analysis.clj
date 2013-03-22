@@ -24,7 +24,6 @@
   (apply shell/sh (split-cmd cmd)))
 
 
-
 (defn -main
   [& [file]]
   (println (format "Running analysis from file %s.\n" file))

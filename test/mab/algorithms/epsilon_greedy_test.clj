@@ -1,6 +1,6 @@
 (ns mab.algorithms.epsilon-greedy-test
   (:use [midje.sweet]
-        [mab arm simulator])
+        [mab arm simulator util])
   (:require [mab.algorithms.epsilon-greedy :as mab-eg]))
 
 
@@ -20,8 +20,11 @@
 
   (let [avg-rwd (float (/ (cumulative-reward (:results sim))
                           (t (:results sim))))]
-    (println (format "Average reward is %2.2f" avg-rwd))
     (fact
       (> avg-rwd 0.70) => truthy)))
 
 
+(facts :accuracy :slow
+       (get (frequencies->probability 
+              (simulate-best-arm-selection 
+                (partial mab-eg/select-arm 0.10) 5 6000 100)) true) => 1.0)

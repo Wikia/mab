@@ -1,6 +1,6 @@
 (ns mab.algorithms.ucb1-test
   (:use [midje.sweet]
-        [mab arm simulator])
+        [mab arm simulator util])
   (:require [mab.algorithms.ucb1 :as mab-ucb1]))
 
 
@@ -13,17 +13,17 @@
 (facts "untested arm"
   (mab-ucb1/untested-arm arms) => truthy
   (arm-count (mab-ucb1/untested-arm arms)) => 0
-  (mab-ucb1/untested-arm (map-on-arm-vals inc-count arms)) => falsey)
+  (mab-ucb1/untested-arm (map-on-map-vals inc-count arms)) => falsey)
 
 (facts "update curiosity bonus"
        ; these should all be > 1
        (filter false? (vals 
-                         (map-on-arm-vals #(> (arm-score %) 1) 
+                         (map-on-map-vals #(> (arm-score %) 1) 
                                           (mab-ucb1/update-curiosity-bonus-all 
-                                            (map-on-arm-vals inc-count arms) 4)))) => empty?)
+                                            (map-on-map-vals inc-count arms) 4)))) => empty?)
 
 (facts "select arm"
-       (let [chosen (mab-ucb1/select-arm (map-on-arm-vals inc-count arms))]
+       (let [chosen (mab-ucb1/select-arm (map-on-map-vals inc-count arms))]
          (tuple-idx chosen) => number?
          (arm-score (tuple-arm chosen)) => #(> % 0)))
 
@@ -40,3 +40,7 @@
 
          (reduce + 0 (map (comp arm-count tuple-arm) (:arms sim))) => 1000
          (> avg-rwd 0.80) => truthy))
+
+(facts :accuracy :slow
+       (get (frequencies->probability 
+              (simulate-best-arm-selection mab-ucb1/select-arm 5 8000 100)) true) => 1.0)

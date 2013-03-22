@@ -1,5 +1,6 @@
 (ns mab.algorithms.softmax
-  (:require [mab.arm :refer (update-arm map-on-arm-vals arm-value random-arm-tuple initialize-arm-map tuple-arm)]
+  (:require [mab.arm :refer (update-arm arm-value random-arm-tuple initialize-arm-map tuple-arm)]
+            [mab.util :refer (map-on-map-vals)]
             [mab.simulator :refer (create-bandit best-mean-index simulation-seq->table repeatedly-simulate-seq)]))
 
 
@@ -18,7 +19,7 @@
 (defn sum-arm-prob
   "Computes the sum of the arm probabilities."
   [temperature arms]
-  (apply + (vals (map-on-arm-vals (partial arm->prob temperature) arms))))
+  (apply + (vals (map-on-map-vals (partial arm->prob temperature) arms))))
 
 
 (defn proportional-probability-seq

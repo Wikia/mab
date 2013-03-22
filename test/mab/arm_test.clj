@@ -1,7 +1,7 @@
 (ns mab.arm-test
   (:use [midje.sweet]
         [clojure pprint]
-        [mab arm]))
+        [mab arm util]))
 
 (def test-arm (create-arm 1 2))
 
@@ -16,7 +16,12 @@
        (compute-update-value 2 2 1) => 1.5)
 
 (facts "update arm"
-       (arm-value (arm-by-idx (update-arm (update-arm (update-arm arms 0 1) 0 1) 0 1) 0)) => #(> % 0))
+       (arm-value (arm-by-idx (update-arm 
+                                (update-arm 
+                                  (update-arm arms 0 1) 0 1) 0 1) 0)) => #(> % 0)
+       ; count = 4, value = 2
+       (arm-value (arm-by-idx (update-arm 
+                                (update-arm arms 0 1 2) 0 1 2) 0)) => 0.5)
       
 (facts "basic arm tests"
        (arm-count test-arm) => 1
@@ -24,7 +29,15 @@
        (arm-count 
          (update-count test-arm 2)) => 2
        (arm-count 
-         (inc-count test-arm)) => 2)
+         (inc-count test-arm)) => 2
+       (arm-count
+         (inc-count (create-arm nil nil))) => 1
+       (arm-count
+         (inc-count (create-arm nil nil) 2)) => 2
+       (arm-count
+         (inc-count (create-arm 0 0))) => 1
+       (arm-count
+         (inc-count (create-arm 0 0) 2)) => 2)
 
 (facts "replace arm"
        (let [idx 0
@@ -62,7 +75,11 @@
              arm-count 10
              band 0.6]
          (> band 
-            (- 5 (/ (reduce + 0 (take sample-size (repeatedly #(random-arm-idx (initialize-arm-map 10))))) sample-size))) => truthy)
+            (- 5 (/ (reduce + 0 
+                            (take sample-size 
+                                  (repeatedly 
+                                    #(random-arm-idx (initialize-arm-map 10))))) 
+                    sample-size))) => truthy)
        (random-arm-tuple arms) => truthy
        (count (random-arm-tuple arms)) => 2
        (first (random-arm-tuple arms)) => truthy
@@ -79,4 +96,11 @@
 
 (facts "map on arm values"
        (total-arm-counts arms) => 0
-       (total-arm-counts (map-on-arm-vals inc-count arms)) => (count arms))
+       (total-arm-counts (map-on-map-vals inc-count arms)) => (count arms))
+
+(facts :all-arms-vals-equal
+       (all-arm-values-equal? (initialize-arm-map (take 100 (cycle [0])) 
+                                                  (take 100 (cycle [0])))) => true
+       (all-arm-values-equal? (initialize-arm-map (take 100 (cycle [0 1])) 
+                                                  (take 100 (cycle [0 1])))) => false)
+
