@@ -6,7 +6,7 @@ A Clojure library for multi-armed bandit optimization and simulation.
 
 ## Release To Jar Repo
 
-    ./scripts/deploy.sh
+    ./scripts/deploy.sh host.site.com
 
 ## License
 
