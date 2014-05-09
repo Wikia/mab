@@ -25,12 +25,25 @@
 (def bandit (create-bandit mean-sample-space))
 (def arms (initialize-arm-map (count mean-sample-space)))
 
-(def s (repeatedly-simulate-seq bandit 
-                         ucb1/select-arm
-                         update-arm
-                         arms
-                         10 
-                         1))
+
+(def sample-space [0.0003 0.0004])
+(def arms (initialize-arm-map (count sample-space)))
+(def bandit (create-keyed-bandit sample-space (-> arms keys sort)))
+(def e-greedy (repeatedly-simulate-seq
+                bandit
+                (partial eg/select-arm 0.1)
+                update-arm
+                arms
+                1000000
+                1))
+
+(def random (repeatedly-simulate-seq
+                bandit
+                r/select-arm
+                update-arm
+                arms
+                1000000
+                1))
 
 ; with sm after taking 10000 you get a stack overflow
 ;(time (last (simulation-seq->table [sm]))) 

@@ -156,16 +156,6 @@
             (recur (remove-arm a (first selected)) (conj ret (first selected)))))))
 
 
-(defn best-value-rate-arm
-  "Find the arm with the higest value / count ratio."
-  [arms]
-  (apply max-key (fn [a]
-                   (let [ap (tuple-arm a)]
-                     (if (> (arm-count ap) 0)
-                       (/ (arm-value ap)
-                          (arm-count ap))
-                       0)))
-         arms))
 
 (defn all-arm-values-equal?
   "Test if all of the arm-value componets of arms are equal."
